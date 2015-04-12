@@ -64,6 +64,7 @@ def dump1(u,issues, config):
   if not w: return False
   for event in w:
     issue_id = event['issue']['number']
+    issue_name = event['issue']['title']
     if not event.get('label'): continue
     created_at = secs(event['created_at'])
     action = event['event']
@@ -76,10 +77,11 @@ def dump1(u,issues, config):
                  what = label_name,
                  user = user,
                  milestone = milestone)
-    all_events = issues.get(issue_id)
-    if not all_events: all_events = []
+    issue_obj = issues.get(issue_id)
+    if not issue_obj: issue_obj = [issue_name, []]
+    all_events = issue_obj[1]
     all_events.append(eventObj)
-    issues[issue_id] = all_events
+    issues[issue_id] = issue_obj
   return True
 
 def dump(u,issues,config):
@@ -124,8 +126,9 @@ def launchDump():
     print("page "+ str(page))
     page += 1
     if not doNext : break
-  for issue, events in issues.iteritems():
-    print("ISSUE " + str(issue))
+  for issue, issueObj in issues.iteritems():
+    events = issueObj[1]
+    print("ISSUE " + str(issue) + ", " + issueObj[0])
     for event in events: print(event.show())
     print('')
     
