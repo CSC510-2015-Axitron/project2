@@ -111,12 +111,18 @@ def launchDump():
   #SQL stuffs
   conn.execute('''CREATE TABLE IF NOT EXISTS issue(id INTEGER, name VARCHAR(128),
         CONSTRAINT pk_issue PRIMARY KEY (id) ON CONFLICT ABORT)''')
+  conn.execute('''CREATE TABLE IF NOT EXISTS milestone(id INTEGER, name VARCHAR(128),
+        CONSTRAINT pk_milestone PRIMARY KEY(id) ON CONFLICT ABORT)''')
   conn.execute('''CREATE TABLE IF NOT EXISTS event(issueID INTEGER NOT NULL, time DATETIME NOT NULL, action VARCHAR(128),
-        label VARCHAR(128), user VARCHAR(128),
-        CONSTRAINT pk_event PRIMARY KEY (issueID, time) ON CONFLICT ABORT,
-        CONSTRAINT fk_event_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
+        label VARCHAR(128), user VARCHAR(128), milestone INTEGER,
+        CONSTRAINT pk_event PRIMARY KEY (issueID, time, action, label) ON CONFLICT ABORT,
+        CONSTRAINT fk_event_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE,
+        CONSTRAINT fk_event_milestone FOREIGN KEY (milestone) REFERENCES milestone(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
+  nameNum = 1
+  nameMap = dict()
 
-  nameMap = {}
+  milestoneNum = 1
+  milestoneMap = dict()
 
   page = 1
   issues = dict()
@@ -126,11 +132,32 @@ def launchDump():
     print("page "+ str(page))
     page += 1
     if not doNext : break
+  issueTuples = []
+  eventTuples = []
+  milestoneTuples = []
   for issue, issueObj in issues.iteritems():
     events = issueObj[1]
+    issueTuples.append([issue, issueObj[0]]);
     print("ISSUE " + str(issue) + ", " + issueObj[0])
-    for event in events: print(event.show())
+    for event in events:
+      print(event.show())
+      if not event.user in nameMap:
+        nameMap[event.user] = config.get('options','repo')+'/user'+str(nameNum)
+        nameNum+=1
+      if 'milestone' in event.__dict__ and not event.milestone in milestoneMap:
+        milestoneMap[event.milestone] = milestoneNum
+        milestoneTuples.append([milestoneMap[event.milestone], event.milestone])
+        milestoneNum += 1
+      eventTuples.append([issue, event.when, event.action, event.what, nameMap[event.user], milestoneMap[event.milestone] if 'milestone' in event.__dict__ else None])
     print('')
+  conn.executemany('INSERT INTO issue VALUES (?,?)', issueTuples)
+  conn.commit()
+  conn.executemany('INSERT INTO milestone VALUES (?,?)', milestoneTuples)
+  conn.commit()
+  conn.executemany('INSERT INTO event VALUES (?, ?, ?, ?, ?, ?)', eventTuples)
+  conn.commit()
+
+  conn.close()
     
 launchDump()
 
