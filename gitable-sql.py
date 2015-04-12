@@ -32,12 +32,9 @@ import re,datetime
 import sys
 import sqlite3
 import ConfigParser
+import os.path
 
-Config = ConfigParser.ConfigParser()
-Config.read("./gitable.conf")
 
-conn = sqlite3.connect(':memory:')
- 
 class L():
   "Anonymous container"
   def __init__(i,**fields) : 
@@ -59,8 +56,8 @@ def secs(d0):
   delta = d - epoch
   return delta.total_seconds()
  
-def dump1(u,issues):
-  token = "INSERT TOKEN HERE" # <===
+def dump1(u,issues, config):
+  token = config.get('options','token') # <===
   request = urllib2.Request(u, headers={"Authorization" : "token "+token})
   v = urllib2.urlopen(request).read()
   w = json.loads(v)
@@ -85,19 +82,45 @@ def dump1(u,issues):
     issues[issue_id] = all_events
   return True
 
-def dump(u,issues):
+def dump(u,issues,config):
   try:
-    return dump1(u, issues)
+    return dump1(u, issues, config)
   except Exception as e: 
     print(e)
     print("Contact TA")
     return False
 
 def launchDump():
+  if os.path.isfile("./gitable.conf"):
+    config = ConfigParser.ConfigParser()
+    config.read("./gitable.conf")
+  else:
+    print("gitable.conf not found, make sure to make one!")
+    sys.exit()
+
+  if not (config.has_option('options', 'token') and config.has_option('options', 'repo')):
+    print("gitable.conf does not have both token and repo, fix!")
+    sys.exit()
+
+  dbFile = config.get('options', 'db') if config.has_option('options','db') else ':memory:'
+
+  conn = sqlite3.connect(dbFile)
+
+  #SQL stuffs
+  conn.execute('''CREATE TABLE IF NOT EXISTS issue(id INTEGER, name VARCHAR(128),
+        CONSTRAINT pk_issue PRIMARY KEY (id) ON CONFLICT ABORT)''')
+  conn.execute('''CREATE TABLE IF NOT EXISTS event(issueID INTEGER NOT NULL, time DATETIME NOT NULL, action VARCHAR(128),
+        label VARCHAR(128), user VARCHAR(128),
+        CONSTRAINT pk_event PRIMARY KEY (issueID, time) ON CONFLICT ABORT,
+        CONSTRAINT fk_event_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
+
+  nameMap = {}
+
   page = 1
   issues = dict()
   while(True):
-    doNext = dump('https://api.github.com/repos/opensciences/opensciences.github.io/issues/events?page=' + str(page), issues)
+    url = 'https://api.github.com/repos/'+config.get('options','repo')+'/issues/events?page=' + str(page)
+    doNext = dump(url, issues, config)
     print("page "+ str(page))
     page += 1
     if not doNext : break
