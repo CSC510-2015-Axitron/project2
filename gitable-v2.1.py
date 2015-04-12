@@ -37,6 +37,7 @@ user_list = []
 
 def anonymize(user):
   if anonymizer:
+    if user == None : return ''
     idx = user_list.index(user) if user in user_list else -1
     if idx == -1:
       user_list.append(user)
