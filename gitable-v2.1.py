@@ -36,14 +36,15 @@ anonymizer = True
 user_list = []
 
 def anonymize(user):
-  if not anonymizer : return user
-  idx = user_list.index(user) if user in user_list else -1
-  if idx == -1:
-    user_list.append(user)
-    return "user"+str(len(user_list) - 1)
+  if anonymizer:
+    idx = user_list.index(user) if user in user_list else -1
+    if idx == -1:
+      user_list.append(user)
+      return "user"+str(len(user_list) - 1)
+    else:
+      return "user"+str(idx)
   else:
-    return "user"+str(idx)
-
+    return user
  
 class L():
   "Anonymous container"
@@ -84,7 +85,10 @@ def dump1(u,issues):
     issue_id = event['issue']['number']
     created_at = secs(event['created_at'])
     action = event['event']
-    label_name = convert(event['issue']['labels'])
+    if not event.get('label'):
+      label_name = " " #convert(event['issue']['labels'])
+    else:
+      label_name = event['label']['name']
     user = event['actor']['login']
     milestone = event['issue']['milestone']
     if milestone != None : milestone = milestone['title']

@@ -70,7 +70,10 @@ def dump1(u,issues):
     issue_id = event['issue']['number']
     created_at = secs(event['created_at'])
     action = event['event']
-    label_name = convert(event['issue']['labels'])
+    if not event.get('label'):
+      label_name = " " #convert(event['issue']['labels'])
+    else:
+      label_name = event['label']['name']
     user = event['actor']['login']
     milestone = event['issue']['milestone']
     if milestone != None : milestone = milestone['title']
