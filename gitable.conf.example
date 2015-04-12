@@ -1,0 +1,4 @@
+[options]
+token: INSERT TOKEN HERE
+db: USE :memory: OR A FILENAME HERE
+repo: opensciences/opensciences.github.io
