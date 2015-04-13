@@ -78,6 +78,7 @@ def dump1(u,issues, config):
   w = json.loads(v)
   if not w: return False
   for event in w:
+    identifier = event['id']
     issue_id = event['issue']['number']
     issue_name = event['issue']['title']
     created_at = secs(event['created_at'])
@@ -86,7 +87,8 @@ def dump1(u,issues, config):
     user = event['actor']['login']
     milestone = event['issue']['milestone']
     if milestone != None : milestone = milestone['title']
-    eventObj = L(when=created_at,
+    eventObj = L(ident=identifier,
+                 when=created_at,
                  action = action,
                  what = label_name,
                  user = user,
@@ -131,7 +133,7 @@ def launchDump():
   #unsure if ignoring duplicate event tuples is a good idea, but the unique information is pretty much all we care about
   #duplicates aren't meaningful, so I guess it 's ok
   conn.execute('''CREATE TABLE IF NOT EXISTS event(issueID INTEGER NOT NULL, time DATETIME NOT NULL, action VARCHAR(128),
-        label VARCHAR(128), user VARCHAR(128), milestone INTEGER,
+        label VARCHAR(128), user VARCHAR(128), milestone INTEGER, identifier INTEGER,
         CONSTRAINT pk_event PRIMARY KEY (issueID, time, action, label) ON CONFLICT IGNORE,
         CONSTRAINT fk_event_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE,
         CONSTRAINT fk_event_milestone FOREIGN KEY (milestone) REFERENCES milestone(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
@@ -172,7 +174,7 @@ def launchDump():
         milestoneMap[event.what] = milestoneNum
         milestoneTuples.append([milestoneMap[event.what], event.what])
         milestoneNum += 1
-      eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else milestoneMap[event.what] if event.action in ['milestoned','demilestoned'] else event.what, nameMap[event.user], milestoneMap[event.milestone] if 'milestone' in event.__dict__ else None])
+      eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else milestoneMap[event.what] if event.action in ['milestoned','demilestoned'] else event.what, nameMap[event.user], milestoneMap[event.milestone] if 'milestone' in event.__dict__ else None, event.ident])
     print('')
   sorted(eventTuples, cmp=lCompare)
   try:
@@ -180,7 +182,7 @@ def launchDump():
     conn.commit()
     conn.executemany('INSERT INTO milestone VALUES (?,?)', milestoneTuples)
     conn.commit()
-    conn.executemany('INSERT INTO event VALUES (?, ?, ?, ?, ?, ?)', eventTuples)
+    conn.executemany('INSERT INTO event VALUES (?, ?, ?, ?, ?, ?, ?)', eventTuples)
     conn.commit()
   except sqlite3.Error as er:
     print(er)
