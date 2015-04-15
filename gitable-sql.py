@@ -33,6 +33,20 @@ import sys
 import sqlite3
 import ConfigParser
 import os.path
+"""
+import argparse
+
+parser = argparse.ArgumentParser(description='Process GitHub issue records and record to SQLite database')
+parser.add_argument('token',help='access token to GitHub')
+parser.add_argument('repo',help='repo to process')
+parser.add_argument('-db','--database',default='', help='specify db filename, default (repo).db')
+
+args = parser.parse_args()
+database = '{}.db'.format(args.repo.replace('\\','_').replace('/','_'))
+if len(args.database)>0:
+  database = args.database
+"""
+
 
 def lCompare(item1, item2):
   if item1[0] == item2[0]:
@@ -166,7 +180,7 @@ def launchDump():
       if event.action == 'assigned' and not event.what in nameMap:
         nameMap[event.what] = config.get('options','repo')+'/user'+str(nameNum)
         nameNum+=1
-      if 'milestone' in event.__dict__ and not event.milestone in milestoneMap:
+      if 'milestone' in event.__dict__ and event.milestone != None and not event.milestone in milestoneMap:
         milestoneMap[event.milestone] = milestoneNum
         milestoneTuples.append([milestoneMap[event.milestone], event.milestone])
         milestoneNum += 1
@@ -174,7 +188,7 @@ def launchDump():
         milestoneMap[event.what] = milestoneNum
         milestoneTuples.append([milestoneMap[event.what], event.what])
         milestoneNum += 1
-      eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else milestoneMap[event.what] if event.action in ['milestoned','demilestoned'] else event.what, nameMap[event.user], milestoneMap[event.milestone] if 'milestone' in event.__dict__ else None, event.ident])
+      eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else milestoneMap[event.what] if event.action in ['milestoned','demilestoned'] else event.what, nameMap[event.user], milestoneMap[event.milestone] if 'milestone' in event.__dict__ and event.milestone != None else None, event.ident])
     print('')
   sorted(eventTuples, cmp=lCompare)
   try:
