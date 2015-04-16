@@ -2,3 +2,4 @@ gitable.py
 gitable.conf
 *.swp
 *.db
+csv/*\.csv

@@ -1,0 +1,4 @@
+for repo in "bighero4_MarkParser" "NCSU-CSC510_CMS-module" "TeamAGGS_DefectProneness" "incognito666_tarantula-python" "FrustratedGameDev_Papers" "SuperCh-SE-NCSU_ProjectScraping" "smartSE_constraintAnalysis" "CSC510_SQLvsNOSQL" "CSC510-2015-Axitron_maze"
+do sqlite3 -csv ${repo}.db "select cl.issueID, (cl.time - op.time) as timeOpen from event cl, (select issueID, min(time) as time from event group by issueID) op where cl.action == 'closed' AND cl.issueID == op.issueID;" > ./csv/${repo}_open_close.csv
+sqlite3 -csv ${repo}.db "select ev.issueID, ev.time-milestone.due_at as secondsAfter from (select issueID, time, milestone from event ev1 where action = 'closed' and milestone not null and time >= (select max(time) from event where issueID = ev1.issueID and action = 'closed')) ev, milestone where milestone.id = ev.milestone;" > ./csv/${repo}_milestone_delay.csv
+done
