@@ -33,19 +33,9 @@ import sys
 import sqlite3
 import ConfigParser
 import os.path
-"""
 import argparse
 
-parser = argparse.ArgumentParser(description='Process GitHub issue records and record to SQLite database')
-parser.add_argument('token',help='access token to GitHub')
-parser.add_argument('repo',help='repo to process')
-parser.add_argument('-db','--database',default='', help='specify db filename, default (repo).db')
 
-args = parser.parse_args()
-database = '{}.db'.format(args.repo.replace('\\','_').replace('/','_'))
-if len(args.database)>0:
-  database = args.database
-"""
 
 
 def lCompare(item1, item2):
@@ -84,9 +74,36 @@ def secs(d0):
   epoch = datetime.datetime.utcfromtimestamp(0)
   delta = d - epoch
   return delta.total_seconds()
- 
-def dump1(u,issues, config):
-  token = config.get('options','token') # <===
+
+def dumpMilestone1(u, milestones, token):
+  request = urllib2.Request(u, headers={"Authorization" : "token "+token})
+  v = urllib2.urlopen(request).read()
+  w = json.loads(v)
+  if not w or ('message' in w and w['message'] == "Not Found"): return False
+  milestone = w
+  identifier = milestone['id']
+  milestone_id = milestone['number']
+  milestone_title = milestone['title']
+  milestone_description = milestone['description']
+  created_at = secs(milestone['created_at'])
+  due_at_string = milestone['due_on']
+  due_at = secs(due_at_string) if due_at_string != None else due_at_string
+  closed_at_string = milestone['closed_at']
+  closed_at = secs(closed_at_string) if closed_at_string != None else closed_at_string
+  user = milestone['creator']['login']
+    
+  milestoneObj = L(ident=identifier,
+               m_id = milestone_id,
+               m_title = milestone_title,
+               m_description = milestone_description,
+               created_at=created_at,
+               due_at = due_at,
+               closed_at = closed_at,
+               user = user)
+  milestones.append(milestoneObj)
+  return True
+
+def dump1(u,issues, token):
   request = urllib2.Request(u, headers={"Authorization" : "token "+token})
   v = urllib2.urlopen(request).read()
   w = json.loads(v)
@@ -100,7 +117,7 @@ def dump1(u,issues, config):
     label_name = event['label']['name'] if 'label' in event else event['assignee']['login'] if action == 'assigned' else event['milestone']['title'] if action in ['milestoned', 'demilestoned'] else action
     user = event['actor']['login']
     milestone = event['issue']['milestone']
-    if milestone != None : milestone = milestone['title']
+    if milestone != None : milestone = milestone['number']
     eventObj = L(ident=identifier,
                  when=created_at,
                  action = action,
@@ -114,10 +131,25 @@ def dump1(u,issues, config):
     issues[issue_id] = issue_obj
   return True
 
-def dump(u,issues,config):
+def dumpMilestone(u,milestones,token):
   try:
-    return dump1(u, issues, config)
+    return dumpMilestone1(u, milestones,token)
+  except urllib2.HTTPError as e:
+    if e.code != 404:
+      print(e)
+      print("404 Contact TA")
+    return False
+  except Exception as e:
+    print(u)
+    print(e)
+    print("other Contact TA")
+    return False
+
+def dump(u,issues,token):
+  try:
+    return dump1(u, issues, token)
   except Exception as e: 
+    print(u)
     print(e)
     print("Contact TA")
     return False
@@ -130,18 +162,29 @@ def launchDump():
     print("gitable.conf not found, make sure to make one!")
     sys.exit()
 
-  if not (config.has_option('options', 'token') and config.has_option('options', 'repo')):
-    print("gitable.conf does not have both token and repo, fix!")
+  if not config.has_option('options', 'token'):
+    print("gitable.conf does not have token, fix!")
     sys.exit()
 
-  dbFile = config.get('options', 'db') if config.has_option('options','db') else ':memory:'
+  parser = argparse.ArgumentParser(description='Process GitHub issue records and record to SQLite database')
+  parser.add_argument('repo',help='repo to process')
+  parser.add_argument('-db','--database',default='', help='specify db filename, default (repo).db')
+
+  args = parser.parse_args()
+  dbFile = '{}.db'.format(args.repo.replace('\\','_').replace('/','_'))
+  if len(args.database)>0:
+    dbFile = args.database.format(args.repo.replace('\\','_').replace('/','_'))
+    #can't handle bad strings very well, be nice to it D:
+  repo = args.repo
+  token = config.get('options','token')
 
   conn = sqlite3.connect(dbFile)
 
   #SQL stuffs
   conn.execute('''CREATE TABLE IF NOT EXISTS issue(id INTEGER, name VARCHAR(128),
         CONSTRAINT pk_issue PRIMARY KEY (id) ON CONFLICT ABORT)''')
-  conn.execute('''CREATE TABLE IF NOT EXISTS milestone(id INTEGER, name VARCHAR(128),
+  conn.execute('''CREATE TABLE IF NOT EXISTS milestone(id INTEGER, title VARCHAR(128), description VARCHAR(1024),
+        created_at DATETIME, due_at DATETIME, closed_at DATETIME, user VARCHAR(128), identifier INTEGER,
         CONSTRAINT pk_milestone PRIMARY KEY(id) ON CONFLICT ABORT)''')
 
   #unsure if ignoring duplicate event tuples is a good idea, but the unique information is pretty much all we care about
@@ -158,50 +201,65 @@ def launchDump():
   milestoneMap = dict()
 
   page = 1
+  milestones = []
+  print('getting records from '+repo)
+  while(True):
+    url = 'https://api.github.com/repos/'+repo+'/milestones/' + str(page)
+    doNext = dumpMilestone(url, milestones, token)
+    #print("mile page "+ str(page))
+    page += 1
+    if not doNext : break
+  page = 1
   issues = dict()
   while(True):
-    url = 'https://api.github.com/repos/'+config.get('options','repo')+'/issues/events?page=' + str(page)
-    doNext = dump(url, issues, config)
-    print("page "+ str(page))
+    url = 'https://api.github.com/repos/'+repo+'/issues/events?page=' + str(page)
+    doNext = dump(url, issues, token)
+    #print("issue page "+ str(page))
     page += 1
     if not doNext : break
   issueTuples = []
   eventTuples = []
   milestoneTuples = []
+
+
+  for milestone in milestones:
+    if not milestone.user in nameMap:
+      nameMap[milestone.user] = repo+'/user'+str(nameNum)
+      nameNum+=1
+    milestoneMap[milestone.m_title] = milestone.m_id
+    milestoneTuples.append([milestone.m_id, milestone.m_title, milestone.m_description, milestone.created_at, milestone.due_at, milestone.closed_at, nameMap[milestone.user], milestone.ident])
+
+
   for issue, issueObj in issues.iteritems():
     events = issueObj[1]
     issueTuples.append([issue, issueObj[0]]);
-    print("ISSUE " + str(issue) + ", " + issueObj[0])
+    #print("ISSUE " + str(issue) + ", " + issueObj[0])
     for event in events:
-      print(event.show())
+      #print(event.show())
       if not event.user in nameMap:
-        nameMap[event.user] = config.get('options','repo')+'/user'+str(nameNum)
+        nameMap[event.user] = repo+'/user'+str(nameNum)
         nameNum+=1
       if event.action == 'assigned' and not event.what in nameMap:
-        nameMap[event.what] = config.get('options','repo')+'/user'+str(nameNum)
+        nameMap[event.what] = repo+'/user'+str(nameNum)
         nameNum+=1
-      if 'milestone' in event.__dict__ and event.milestone != None and not event.milestone in milestoneMap:
-        milestoneMap[event.milestone] = milestoneNum
-        milestoneTuples.append([milestoneMap[event.milestone], event.milestone])
-        milestoneNum += 1
-      if event.action in ['milestoned','demilestoned'] and not event.what in milestoneMap:
-        milestoneMap[event.what] = milestoneNum
-        milestoneTuples.append([milestoneMap[event.what], event.what])
-        milestoneNum += 1
-      eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else milestoneMap[event.what] if event.action in ['milestoned','demilestoned'] else event.what, nameMap[event.user], milestoneMap[event.milestone] if 'milestone' in event.__dict__ and event.milestone != None else None, event.ident])
-    print('')
-  sorted(eventTuples, cmp=lCompare)
+      eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else event.what, nameMap[event.user], event.milestone if 'milestone' in event.__dict__ else None, event.ident])
+    #print('')
   try:
-    conn.executemany('INSERT INTO issue VALUES (?,?)', issueTuples)
-    conn.commit()
-    conn.executemany('INSERT INTO milestone VALUES (?,?)', milestoneTuples)
-    conn.commit()
-    conn.executemany('INSERT INTO event VALUES (?, ?, ?, ?, ?, ?, ?)', eventTuples)
-    conn.commit()
+    if len(issueTuples) > 0:
+      conn.executemany('INSERT INTO issue VALUES (?,?)', issueTuples)
+      conn.commit()
+    if len(milestoneTuples) > 0:
+      conn.executemany('INSERT INTO milestone VALUES (?, ?, ?, ?, ?, ?, ?, ?)', milestoneTuples)
+      conn.commit()
+    if len(eventTuples) > 0:
+      conn.executemany('INSERT INTO event VALUES (?, ?, ?, ?, ?, ?, ?)', eventTuples)
+      conn.commit()
   except sqlite3.Error as er:
     print(er)
+    print(milestoneTuples)
 
   conn.close()
+  print('done!')
     
 launchDump()
 
