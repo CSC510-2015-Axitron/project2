@@ -3,3 +3,4 @@ gitable.conf
 *.swp
 *.db
 csv/*\.csv
+key.txt

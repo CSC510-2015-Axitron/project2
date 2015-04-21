@@ -168,14 +168,16 @@ def launchDump():
 
   parser = argparse.ArgumentParser(description='Process GitHub issue records and record to SQLite database')
   parser.add_argument('repo',help='repo to process')
+  parser.add_argument('groupname',help='anonymization to apply to project title')
   parser.add_argument('-db','--database',default='', help='specify db filename, default (repo).db')
 
   args = parser.parse_args()
-  dbFile = '{}.db'.format(args.repo.replace('\\','_').replace('/','_'))
+  dbFile = '{}.db'.format(args.groupname.replace('\\','_').replace('/','_'))
   if len(args.database)>0:
     dbFile = args.database.format(args.repo.replace('\\','_').replace('/','_'))
     #can't handle bad strings very well, be nice to it D:
   repo = args.repo
+  group = args.groupname
   token = config.get('options','token')
 
   conn = sqlite3.connect(dbFile)
@@ -224,7 +226,7 @@ def launchDump():
 
   for milestone in milestones:
     if not milestone.user in nameMap:
-      nameMap[milestone.user] = repo+'/user'+str(nameNum)
+      nameMap[milestone.user] = group+'/user'+str(nameNum)
       nameNum+=1
     milestoneMap[milestone.m_title] = milestone.m_id
     milestoneTuples.append([milestone.m_id, milestone.m_title, milestone.m_description, milestone.created_at, milestone.due_at, milestone.closed_at, nameMap[milestone.user], milestone.ident])
@@ -237,10 +239,10 @@ def launchDump():
     for event in events:
       #print(event.show())
       if not event.user in nameMap:
-        nameMap[event.user] = repo+'/user'+str(nameNum)
+        nameMap[event.user] = group+'/user'+str(nameNum)
         nameNum+=1
       if event.action == 'assigned' and not event.what in nameMap:
-        nameMap[event.what] = repo+'/user'+str(nameNum)
+        nameMap[event.what] = group+'/user'+str(nameNum)
         nameNum+=1
       eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else event.what, nameMap[event.user], event.milestone if 'milestone' in event.__dict__ else None, event.ident])
     #print('')
