@@ -75,6 +75,26 @@ def secs(d0):
   delta = d - epoch
   return delta.total_seconds()
 
+def dumpComments1(u, comments, token):
+  request = urllib2.Request(u, headers={"Authorization" : "token "+token})
+  v = urllib2.urlopen(request).read()
+  w = json.loads(v)
+  if not w: return False
+  for comment in w:
+    user = comment['user']['login']
+    identifier = comment['id']
+    comment_text = comment['body']
+    created_at = secs(comment['created_at'])
+    updated_at = secs(comment['updated_at'])
+    commentObj = L(ident = identifier,
+                user = user,
+                text = comment_text,
+                created_at = created_at,
+                updated_at = updated_at)
+    comments.append(commentObj)
+  return True
+
+
 def dumpMilestone1(u, milestones, token):
   request = urllib2.Request(u, headers={"Authorization" : "token "+token})
   v = urllib2.urlopen(request).read()
@@ -130,6 +150,15 @@ def dump1(u,issues, token):
     all_events.append(eventObj)
     issues[issue_id] = issue_obj
   return True
+
+def dumpComments(u,comments, token):
+  try:
+    return dumpComments1(u,comments,token)
+  except Exception as e: 
+    print(u)
+    print(e)
+    print("Contact TA")
+    return False
 
 def dumpMilestone(u,milestones,token):
   try:
@@ -196,6 +225,10 @@ def launchDump():
         CONSTRAINT pk_event PRIMARY KEY (issueID, time, action, label) ON CONFLICT IGNORE,
         CONSTRAINT fk_event_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE,
         CONSTRAINT fk_event_milestone FOREIGN KEY (milestone) REFERENCES milestone(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
+  conn.execute('''CREATE TABLE IF NOT EXISTS comment(issueID INTEGER NOT NULL, user VARCHAR(128), createtime DATETIME NOT NULL,
+        updatetime DATETIME, text VARCHAR(1024), identifier INTEGER,
+        CONSTRAINT pk_comment PRIMARY KEY (issueID, user, createtime) ON CONFLICT IGNORE,
+        CONSTRAINT fk_comment_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
   nameNum = 1
   nameMap = dict()
 
@@ -208,7 +241,7 @@ def launchDump():
   while(True):
     url = 'https://api.github.com/repos/'+repo+'/milestones/' + str(page)
     doNext = dumpMilestone(url, milestones, token)
-    #print("mile page "+ str(page))
+    print("milestone "+ str(page))
     page += 1
     if not doNext : break
   page = 1
@@ -216,12 +249,20 @@ def launchDump():
   while(True):
     url = 'https://api.github.com/repos/'+repo+'/issues/events?page=' + str(page)
     doNext = dump(url, issues, token)
-    #print("issue page "+ str(page))
+    print("issue page "+ str(page))
     page += 1
     if not doNext : break
+  comments = dict()
+  for issue, issueObj in issues.iteritems():
+    url = 'https://api.github.com/repos/'+repo+'/issues/'+str(issue)+'/comments' 
+    commentList = []
+    if dumpComments(url, commentList, token):
+        print('issue '+str(issue)+' comments')
+        comments[issue] = commentList
   issueTuples = []
   eventTuples = []
   milestoneTuples = []
+  commentTuples = []
 
 
   for milestone in milestones:
@@ -245,17 +286,34 @@ def launchDump():
         nameMap[event.what] = group+'/user'+str(nameNum)
         nameNum+=1
       eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else event.what, nameMap[event.user], event.milestone if 'milestone' in event.__dict__ else None, event.ident])
+    if issue in comments:
+      for comment in comments[issue]:
+        if not comment.user in nameMap:
+          nameMap[comment.user] = group+'/user'+str(nameNum)
+          nameNum+=1
+        commentTuples.append([issue, nameMap[comment.user], comment.created_at, comment.updated_at, comment.text, comment.ident])
     #print('')
+
+
+
+
   try:
     if len(issueTuples) > 0:
       conn.executemany('INSERT INTO issue VALUES (?,?)', issueTuples)
       conn.commit()
+      print('committed issues')
     if len(milestoneTuples) > 0:
       conn.executemany('INSERT INTO milestone VALUES (?, ?, ?, ?, ?, ?, ?, ?)', milestoneTuples)
       conn.commit()
+      print('committed milestones')
     if len(eventTuples) > 0:
       conn.executemany('INSERT INTO event VALUES (?, ?, ?, ?, ?, ?, ?)', eventTuples)
       conn.commit()
+      print('committed events')
+    if len(commentTuples) > 0:
+      conn.executemany('INSERT INTO comment VALUES (?, ?, ?, ?, ?, ?)', commentTuples)
+      conn.commit()
+      print('committed comments')
   except sqlite3.Error as er:
     print(er)
     print(milestoneTuples)
