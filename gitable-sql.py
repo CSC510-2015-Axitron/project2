@@ -75,6 +75,23 @@ def secs(d0):
   delta = d - epoch
   return delta.total_seconds()
 
+def dumpCommit1(u,commits,token):
+  request = urllib2.Request(u, headers={"Authorization" : "token "+token})
+  v = urllib2.urlopen(request).read()
+  w = json.loads(v)
+  if not w: return False
+  for commit in w:
+    sha = commit['sha']
+    user = commit['author']['login']
+    time = secs(commit['commit']['author']['date'])
+    message = commit['commit']['message']
+    commitObj = L(sha = sha,
+                user = user,
+                time = time,
+                message = message)
+    commits.append(commitObj)
+  return True
+
 def dumpComments1(u, comments, token):
   request = urllib2.Request(u, headers={"Authorization" : "token "+token})
   v = urllib2.urlopen(request).read()
@@ -83,10 +100,12 @@ def dumpComments1(u, comments, token):
   for comment in w:
     user = comment['user']['login']
     identifier = comment['id']
+    issueid = int((comment['issue_url'].split('/'))[-1])
     comment_text = comment['body']
     created_at = secs(comment['created_at'])
     updated_at = secs(comment['updated_at'])
     commentObj = L(ident = identifier,
+                issue = issueid, 
                 user = user,
                 text = comment_text,
                 created_at = created_at,
@@ -151,6 +170,15 @@ def dump1(u,issues, token):
     issues[issue_id] = issue_obj
   return True
 
+def dumpCommit(u,commits, token):
+  try:
+    return dumpCommit1(u,commits,token)
+  except Exception as e: 
+    print(u)
+    print(e)
+    print("Contact TA")
+    return False
+
 def dumpComments(u,comments, token):
   try:
     return dumpComments1(u,comments,token)
@@ -170,7 +198,7 @@ def dumpMilestone(u,milestones,token):
     return False
   except Exception as e:
     print(u)
-    print(e)
+    rint(e)
     print("other Contact TA")
     return False
 
@@ -229,6 +257,9 @@ def launchDump():
         updatetime DATETIME, text VARCHAR(1024), identifier INTEGER,
         CONSTRAINT pk_comment PRIMARY KEY (issueID, user, createtime) ON CONFLICT IGNORE,
         CONSTRAINT fk_comment_issue FOREIGN KEY (issueID) REFERENCES issue(id) ON UPDATE CASCADE ON DELETE CASCADE)''')
+  conn.execute('''CREATE TABLE IF NOT EXISTS commits(id INTEGER NOT NULL, time DATETIME NOT NULL, sha VARCHAR(128),
+        user VARCHAR(128), message VARCHAR(128),
+        CONSTRAINT pk_commits PRIMARY KEY (id) ON CONFLICT ABORT)''')        
   nameNum = 1
   nameMap = dict()
 
@@ -252,17 +283,27 @@ def launchDump():
     print("issue page "+ str(page))
     page += 1
     if not doNext : break
-  comments = dict()
-  for issue, issueObj in issues.iteritems():
-    url = 'https://api.github.com/repos/'+repo+'/issues/'+str(issue)+'/comments' 
-    commentList = []
-    if dumpComments(url, commentList, token):
-        print('issue '+str(issue)+' comments')
-        comments[issue] = commentList
+  page = 1
+  comments = []
+  while(True):
+    url = 'https://api.github.com/repos/'+repo+'/issues/comments?page='+str(page)
+    doNext = dumpComments(url, comments, token)
+    print("comments page "+ str(page))
+    page += 1
+    if not doNext : break
+  page = 1
+  commits = []
+  while(True):
+    url = 'https://api.github.com/repos/'+repo+'/commits?page=' + str(page)
+    doNext = dumpCommit(url, commits, token)
+    print("commit page "+ str(page))
+    page += 1
+    if not doNext : break
   issueTuples = []
   eventTuples = []
   milestoneTuples = []
   commentTuples = []
+  commitTuples = []
 
 
   for milestone in milestones:
@@ -286,14 +327,19 @@ def launchDump():
         nameMap[event.what] = group+'/user'+str(nameNum)
         nameNum+=1
       eventTuples.append([issue, event.when, event.action, nameMap[event.what] if event.action == 'assigned' else event.what, nameMap[event.user], event.milestone if 'milestone' in event.__dict__ else None, event.ident])
-    if issue in comments:
-      for comment in comments[issue]:
-        if not comment.user in nameMap:
-          nameMap[comment.user] = group+'/user'+str(nameNum)
-          nameNum+=1
-        commentTuples.append([issue, nameMap[comment.user], comment.created_at, comment.updated_at, comment.text, comment.ident])
     #print('')
 
+  for comment in comments:
+    if not comment.user in nameMap:
+      nameMap[comment.user] = group+'/user'+str(nameNum)
+      nameNum+=1
+    commentTuples.append([comment.issue, nameMap[comment.user], comment.created_at, comment.updated_at, comment.text, comment.ident])
+
+  for commit in commits:
+    if not commit.user in nameMap:
+      nameMap[commit.user] = group+'/user'+str(nameNum)
+      nameNum+=1
+    commitTuples.append([commit.time, commit.sha, nameMap[commit.user], commit.message])
 
 
 
@@ -314,9 +360,12 @@ def launchDump():
       conn.executemany('INSERT INTO comment VALUES (?, ?, ?, ?, ?, ?)', commentTuples)
       conn.commit()
       print('committed comments')
+    if len(commitTuples) > 0:
+      conn.executemany('INSERT INTO commits (time, sha, user, message) VALUES (?,?,?,?)', commitTuples)
+      conn.commit()
+      print('committed commits')
   except sqlite3.Error as er:
     print(er)
-    print(milestoneTuples)
 
   conn.close()
   print('done!')
