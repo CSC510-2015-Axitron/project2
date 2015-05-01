@@ -12,7 +12,7 @@ Something Something gitable SQL
 
 ##Anonymization
 
-Something something user1, user2, ...
+Something something replaced things as we saw them.
 
 ##Tables
 
