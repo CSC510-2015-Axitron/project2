@@ -2,6 +2,12 @@
 
 ##Collection
 
+###What we collected
+
+...Issues, Milestones, Comments, Commits...
+
+###How we collected it
+
 Something Something gitable SQL
 
 ##Anonymization
