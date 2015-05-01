@@ -2,7 +2,11 @@
 
 ##Collection
 
+Something Something gitable SQL
+
 ##Anonymization
+
+Something something user1, user2, ...
 
 ##Tables
 
