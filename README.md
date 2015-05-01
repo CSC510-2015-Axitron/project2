@@ -2,7 +2,7 @@
 
 Arma virumque cano troiae qui primus ab oris
 
-# Project 2 How-To
+# Project 2 Info (Not part of paper)
 repo for storing project 2 data and code
 
 ## Usage
