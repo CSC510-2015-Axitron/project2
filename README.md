@@ -1,6 +1,30 @@
 # Project 2 Paper
 
-Arma virumque cano troiae qui primus ab oris
+##Collection
+
+##Anonymization
+
+##Tables
+
+##Data
+
+##Data Samples
+
+##Feature Detection
+
+##Feature Detection Results
+
+##Bad Smells Detector
+
+##Bad Smells Results
+
+##Early Warning
+
+##Early Warning Results
+
+
+
+
 
 # Project 2 Info (Not part of paper)
 repo for storing project 2 data and code
