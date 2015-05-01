@@ -7,5 +7,6 @@ sqlite3 -csv ${repo}.db "select issueID, count(distinct user) from comment group
 sqlite3 -csv ${repo}.db "select user, count(*) from event e1 where time <= (select min(time) from event where issueID = e1.issueID) group by user;" > ./csv/issue_create/${repo}.csv
 sqlite3 -csv ${repo}.db "select issueID, count(*) from comment group by issueID;" > ./csv/issue_numcomments/${repo}.csv
 sqlite3 -csv ${repo}.db "select bugs, count(distinct issueID) as issues, (bugs+0.0)/count(distinct issueID) as ratio from (select count(*) as bugs from event where lower(label) like '%bug%' and action == 'labeled'), event;" > ./csv/bugratio/${repo}.csv
+sqlite3 -csv ${repo}.db "select user, count(*) as comments from comment group by user;" > ./csv/comments_user/${repo}.csv
 done
 find ./csv/ -size  0 -exec rm '{}' \;
