@@ -1,4 +1,8 @@
-# project2
+# Project 2 Paper
+
+Arma virumque cano troiae qui primus ab oris
+
+# Project 2 How-To
 repo for storing project 2 data and code
 
 ## Usage
