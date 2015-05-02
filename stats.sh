@@ -8,5 +8,6 @@ sqlite3 -csv ${repo}.db "select user, count(*) from event e1 where time <= (sele
 sqlite3 -csv ${repo}.db "select issueID, count(*) from comment group by issueID;" > ./csv/issue_numcomments/${repo}.csv
 sqlite3 -csv ${repo}.db "select bugs, count(distinct issueID) as issues, (bugs+0.0)/count(distinct issueID) as ratio from (select count(*) as bugs from event where lower(label) like '%bug%' and action == 'labeled'), event;" > ./csv/bugratio/${repo}.csv
 sqlite3 -csv ${repo}.db "select user, count(*) as comments from comment group by user;" > ./csv/comments_user/${repo}.csv
+sqlite3 -csv ${repo}.db "select numShort, numTotal, (numShort+0.0)/numTotal from (select count(*) as numShort from event cl, (select issueID, min(time) as time from event group by issueID) op where cl.action == 'closed' AND cl.issueID == op.issueID and (cl.time - op.time) < 3600), (select count(distinct issueID) as numTotal from event);" > ./csv/short_open/${repo}.csv
 done
 find ./csv/ -size  0 -exec rm '{}' \;
