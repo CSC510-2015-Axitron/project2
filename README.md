@@ -149,9 +149,175 @@ This detector was intended to discover if there was a correlation between when a
 
 ##Feature Detection Results
 
-##Bad Smells Detector
+## Bad Smells Detector
 
-##Bad Smells Results
+We combined our feature extractors to create 5 different bad smell detectors. In this section we will attempt to describe how these detectors were created as well as the motivation for each detector.  The idea was to try to create as many detectors as possible from the feature extractors that we were able to define.
+
+#### Poor Communication
+The first detector is for poor communication.  The overall motivation with this as a bad smell is that if a group cannot communicate well, it will generally affect their productivity over the long term.  People in this sort of situation generally work at cross purposes and can run into issues like commit collisions, or duplication of effort.  It uses three feature extractors:
+
+- The number of posters in issue comments
+- The number of comments in issues
+- The percentage of comments by each user
+
+For number of posters in issue comments we were looking at the number of of individual users that posted on each issue.  The idea is that if only a small percentage of a group actually discussed issues then there is really poor communication overall.  We set the limit at 50% of of the group, so groups having less than 50% of their members commenting on issues had a bad smell.
+
+Number of comments in issues was gauged a bit differently.  We came to the conclusion that if an issue was important enough to be posted then there should be some kind of discussion of that issue.  We decided that less than 2 comments per issue was a bad smell.  At that point there is no to very little discussion of individual issues.
+
+Percentage of comments by each user is another metric for communication.  If only a few members actually make comments in issues then there are only a few members that are actually communicating.  We decided that if an individual user had less comments than the output of the following function we had a bad smell:  (total number of comments/number of group members * 2). 
+
+#### Poor Milestone Usage
+The next detecor is for poor milestone usage.  Milestones can be a great way to set up work for groups by splitting work into achievable sections.  So there can be two major benefits: the first is a simple sense of achievement for a group upon comletion of a milestone, the second is a a deadline to meet to keep work on track.  Additonally milestones can be used to get an idea of whether work is on track or not.  Given all of that poor milestone usage can definitely affect the level of success or failure that a group may find in producing a piece of software.  This detector comibined the following metrics:
+
+- Issues missing milestones
+- Non linear progress momentum
+- Less than 3 milestones overall
+- Milestones left incomplete
+
+For the first of the metrics, issues missing milestones, we decided that a median value over 0 was a poor value for a group.  The idea was that if a few issues were outside of milestones that was acceptable since there are bound to be such issues.  A good example is a bug issue post, that post would likely be outside of any milestone and it is definitely a good thing to have bug posts. 
+
+Non-linear progress momentum was another metric for this.  <PLACEHOLDER>  
+
+If there were less than three milestones overall there was also a case for poor milestone usage.  THe motivation here is that if a group only had three milestones over the entire project lifespan then those three milestones were likely packed with issues and would be unweildy.  Splitting among many reachable milestones was viewed as more positive.
+
+Milestones that were not completed was an obvious bad smell within a project.  If a group left any milestones incomplete they were considered as having a bad smell.  As will be seen below there were some groups that left more than one milestone open and that would be considered as even more negative.
+
+#### Absent Group Member
+The idea with this bad smell was that if a group member was not contributing they represented sort of dead weight within a project.  There are many bad effects that come with an absent group member but the most detrimental is poor morale.  If other group members sense that there is a member who isn't pulling their weight, it can negatively affect how the working members feel about the project in general.  Then added to that effect is the simple fact that there are just less hands to work on the project.  The metrics attached to the smell are:
+
+- Number of issue posters
+- Percentage of comments by each user
+- Equal number of assignees
+- Number of posters in issue comments
+
+We used the same calculation for the first three metrics:  (Total number of x / number of group members * 2) where x is either issues, comments, or assignments for each metric.  If any individual user was below the number calculated for that function in either issues, comments, or assignements as matched the case we considered that a bad smell.  
+
+Additionally we looked at the number of posters in issue comments.  If a user was posting in less than 50% of the comments we would also consider that a bad smell.
+
+#### Poor Planning
+Poor planning was a big of a hodgepodge of different feature extractors since github was used a good deal for planning throughout the semester.  The motivation here is that if a group had poor planning there could be many different failings that emerge over a semester.  If a group has planned poorly it will severely limit the amount of success they could possibly have over a semester long project.  The main way that takes place is in the lack of thinking about potential roadblocks in a project, if there is no plan in place then projects could get much of the way through development and hit an issue that makes the entire project non-functional.  Also a group may find that the scale of their project is either way above or way below the amount of time available for the project.  The metrics for the smell are:
+
+- Long time between issues opening and closing
+- Issues missing milestones
+- Equal number of assignnees
+- Non-linear progress momentum
+- Short time between issues opening and closing
+- Commit history linearity
+
+For long time between issues opening and closing, we considered twenty days a poor performance.  At twenty days an issue had been outstanding for quite a long time and represents a bad smell.
+
+We used the same calculations mentioned above for issues missing milestones, equal number of assignees, and non-linear progress momentum. 
+
+With short time between issues opening and closing we considered that if greater than 20% of the issues for a group were open less than an hour, that was a bad smell.
+
+Finally wiht the linearity of commit history, if the error in linearity was greater than 20% we considered that a bad smell.
+
+#### Dictator 
+Our dictator bad smell was very similar to our absent bad smell, but with many of the inequality symbols changed around.  If a project has a dictator there are many negative effects that may not be immediately visible.  The first effect is that options are not discussed so a group may not be taking an optimal path to completion of the project.  Secondly group members may not feel that they can contribute to the project simply because they were not consulted and do not have a grasp of all of the technologies involved.  THe metrics for this smell were:
+
+- Number of posters in issue comments
+- Number of issue posters
+- Equal number of assignees
+- Percent of comments by user
+
+For number of posters in issue comments, if a single user had a comment in more than 90% of issues, while others had closer to 50% or less, that was considered a bad smell.  
+
+If a user posted more than the following function of issues that was also a bad smell: (Total number of issues / Number of members * 2)
+
+If a user had more assignments than the following function of assignments that was also a bad smell: (Total number of assignments / Number of members * 2)
+
+If a user posted more than the following function of comments that was also a bad smell: (Total number of comments / Number of members * 2)
+
+
+## Results
+
+We have used the folowing acronyms for the various features that we were dealing with:
+
+- numpost:  The number of posters in issue comments
+- numcom: The number of comments in issues
+- percom: The percentage of comments by each user
+- missmile: Issues missing milestones
+- nonlin:  Non-linear progress momentum
+- fewmile:  Less than 3 milestones overall
+- incmile:  Milestones left incomplete
+- eqassgn:  Equal number of assignees
+- longtime:  Lone time between issues opening and closing
+- shorttime:  Short time between issues opening and closing
+- lincommitt:  Commit history linearity
+- numiss :  Number of issue posters
+
+#### Poor Communication
+
+The table below describes the scoring for each group in the three categories for poor communication:
+
+| Group Number | numpost | numcom | percom | Stink Score |
+|:------------:|:-------:|:------:|:------:|:-----------:|
+|       1      |    1    |   1    |   1    |      3      |
+|       2      |    1    |   1    |   1    |      3      |
+|       3      |    1    |   0    |   0    |      1      |
+|       4      |    1    |   1    |   1    |      3      |
+|       5      |    0    |   0    |   1    |      1      |
+|       6      |    1    |   1    |   1    |      3      |
+|       7      |    0    |   1    |   0    |      1      |
+|       8      |    1    |   0    |   0    |      1      |
+|       9      |    1    |   0    |   1    |      2      |
+
+
+#### Poor Milstone Usage
+
+| Group Number | missmile | nonlin | fewmile | incmile | StinkScore |
+|:------------:|:--------:|:------:|:-------:|:-------:|:----------:|
+|       1      |    1     |    1   |    0     |     0    |      2     |
+|       2      |    1     |    0   |    0     |     0    |      1     |
+|       3      |    0     |    0   |    0     |     0    |      0     |
+|       4      |    0     |    0   |    0     |     0    |      0     |
+|       5      |    0     |    0   |    0     |     0    |      0     |
+|       6      |    0     |    0   |    0     |     0    |      0     |
+|       7      |    1     |    1   |    0     |     1    |      3     |
+|       8      |    1     |    1   |    0     |     1    |      3     |
+|       9      |    0     |    0   |    0     |     0    |      0     |
+
+#### Poor Planning
+
+| Group Number | longtime | missmile | eqassgn | nonlin | shorttime | lincommit | Stink Score |
+|:------------:|:--------:|:--------:|:-------:|:------:|:---------:|:---------:|:-----------:|
+|       1      |    0     |    1     |    0    |   1    |     0     |     0     |      2      |
+|       2      |    1     |    1     |    1    |   0    |     0     |     1     |      4      |
+|       3      |    0     |    0     |    0    |   0    |     1     |     0     |      1      |
+|       4      |    0     |    0     |    1    |   0    |     0     |     0     |      1      |
+|       5      |    1     |    0     |    0    |   0    |     0     |     1     |      2      |
+|       6      |    0     |    0     |    1    |   0    |     0     |     1     |      2      |
+|       7      |    0     |    1     |    0    |   1    |     0     |     0     |      2      |
+|       8      |    0     |    1     |    1    |   1    |     1     |     0     |      4      |
+|       9      |    0     |    0     |    0    |   0    |     0     |     0     |      0      |
+
+#### Absent Group Member
+
+| Group Number | numiss | percom | eqassgn | numpost | StinkScore |
+|:------------:|:------:|:------:|:-------:|:-------:|:----------:|
+|       1      |   1    |   1    |    0    |    1    |     3      |
+|       2      |   1    |   1    |    1    |    1    |     4      |
+|       3      |   1    |   0    |    0    |    1    |     2      |
+|       4      |   1    |   1    |    1    |    1    |     4      |
+|       5      |   1    |   0    |    0    |    0    |     1      |
+|       6      |   1    |   1    |    1    |    1    |     4      |
+|       7      |   0    |   1    |    0    |    0    |     1      |
+|       8      |   1    |   0    |    1    |    1    |     3      |
+|       9      |   0    |   0    |    0    |    1    |     1      |
+
+#### Dictator Group Member
+
+| Group Number | numiss | percom | eqassgn | numpost | StinkScore |
+|:------------:|:------:|:------:|:-------:|:-------:|:----------:|
+|       1      |        |        |         |         |            |
+|       2      |        |        |         |         |            |
+|       3      |        |        |         |         |            |
+|       4      |        |        |         |         |            |
+|       5      |        |        |         |         |            |
+|       6      |        |        |         |         |            |
+|       7      |        |        |         |         |            |
+|       8      |        |        |         |         |            |
+|       9      |        |        |         |         |            |
 
 ##Early Warning
 
