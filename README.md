@@ -46,13 +46,39 @@ Once this is complete, a .db file for that repo which can be transferred through
 
 Something something replaced things as we saw them.
 
-##Tables**
+##Tables
 
 ##Data
 
+Totals:
+| Milestones | Issues | Events | Comments | Commits |
+|-----------:|-------:|-------:|---------:|--------:|
+|         47 |    578 |   3883 |     1328 |    1760 |
+
 ##Data Samples
 
-##Feature Detection**
+#### Milestone
+id|title|description|created_at|due_at|closed_at|user|identifier
+---|---|---|---|---|---|---|---
+1|v0.1|(text)|1424538641|1425013200|1425168047|group9/user1|989453
+#### Issue
+id|name
+---|---
+1|User Input (moving smily via keyboard)
+#### Event
+issueID|time|action|label|user|milestone|identifier
+---|---|---|---|---|---|---
+1|1423616709|closed|closed|group9/user1||233661242
+#### Comment
+issueID|user|createtime|updatetime|text|identifier
+---|---|---|---|---|---
+1|group9/user1|1423608247|1423608247|(text)|73800452
+#### Commits
+id|time|sha|user|message
+---|---|---|---|---
+1|1428349546|d924a137ebf530fcd56c73980c9fcfbf6de69cdd|group9/user3|(text)
+
+##Feature Detection
 
 We eventually came up with 13 feature detectors utilizing our data. These detectors are as follows:
 
@@ -220,7 +246,7 @@ Our dictator bad smell was very similar to our absent bad smell, but with many o
 - Equal number of assignees
 - Percent of comments by user
 
-For number of posters in issue comments, if a single user had a comment in more than 90% of issues, while others had closer to 50% or less, that was considered a bad smell.  
+For number of posters in issue comments, if a single user had a comment in most of the issues, that was considered a bad smell.  
 
 If a user posted more than the following function of issues that was also a bad smell: (Total number of issues / Number of members * 2)
 
@@ -309,15 +335,15 @@ The table below describes the scoring for each group in the three categories for
 
 | Group Number | numiss | percom | eqassgn | numpost | StinkScore |
 |:------------:|:------:|:------:|:-------:|:-------:|:----------:|
-|       1      |        |        |         |         |            |
-|       2      |        |        |         |         |            |
-|       3      |        |        |         |         |            |
-|       4      |        |        |         |         |            |
-|       5      |        |        |         |         |            |
-|       6      |        |        |         |         |            |
-|       7      |        |        |         |         |            |
-|       8      |        |        |         |         |            |
-|       9      |        |        |         |         |            |
+|       1      |   0    |   1    |    0    |    1    |     2      |
+|       2      |   1    |   0    |    0    |    1    |     2      |
+|       3      |   1    |   0    |    0    |    1    |     2      |
+|       4      |   0    |   0    |    1    |    1    |     2      |
+|       5      |   0    |   0    |    0    |    0    |     0      |
+|       6      |   0    |   0    |    1    |    1    |     2      |
+|       7      |   0    |   0    |    0    |    0    |     0      |
+|       8      |   1    |   0    |    0    |    1    |     2      |
+|       9      |   0    |   0    |    0    |    1    |     1      |
 
 ##Early Warning
 
