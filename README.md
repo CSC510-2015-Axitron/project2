@@ -51,6 +51,7 @@ Something something replaced things as we saw them.
 ##Data
 
 Totals:
+
 | Milestones | Issues | Events | Comments | Commits |
 |-----------:|-------:|-------:|---------:|--------:|
 |         47 |    578 |   3883 |     1328 |    1760 |
