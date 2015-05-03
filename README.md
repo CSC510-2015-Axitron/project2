@@ -44,7 +44,21 @@ Once this is complete, a .db file for that repo which can be transferred through
 
 ##Anonymization
 
-Something something replaced things as we saw them.
+Anonymization was performed on both group names and group users, so the individual groups and users will not be identified. Each group in our database was assigned with a number based on the order in which they were imported in the database. To anonymize users within each group, an empty array was created and each time when user ID was detected, the python program searched the array for the ID. If the user ID was not found in the array the ID would be entered into the array. Then, the user ID was replaced with "user" plus the index number of the ID in the array. The code for anonymization is shown as follows.
+
+```
+def anonymize(user):
+  if anonymizer:
+    if user == None : return ''
+    idx = user_list.index(user) if user in user_list else -1
+    if idx == -1:
+      user_list.append(user)
+      return "user"+str(len(user_list) - 1)
+    else:
+      return "user"+str(idx)
+  else:
+    return user
+```
 
 ##Tables
 
