@@ -62,7 +62,7 @@ def anonymize(user):
 
 ## 3. Tables
 
-All tables in this project 2 paper are located in the Bad Smells Results section, one table per bad smell. Each table reports  stink scores summarized from the feature detectors corresponding to particular bad smell. If the numerical result of feature detector of the group is higher than the defined threshold, a stink score "1" is earned.
+All tables in this project 2 paper are located in [Bad Smells Results](https://github.com/CSC510-2015-Axitron/project2#9-bad-smells-results) section, one table per bad smell. Each table reports stink scores summarized from the results of feature detectors corresponding to the particular bad smell. If the numerical result of feature detector for the group is higher than the defined threshold, a stink score "1" is earned.
 
 ## 4. Data
 
