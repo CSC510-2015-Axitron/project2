@@ -40,7 +40,7 @@ As recommended, we utilized the gitable.py utility to grab the initial sets of d
 3. Preprocess it (anonymization and formatting for insertion into database)
 4. Create a SQLite database if one does not already exist, and insert all the data into it
 
-Once this is complete, a .db file for that repo which can be transferred through email or any other file sharing means and queried at leisure offline.
+Once this is complete, it will spit out a .db file for that repo which can be transferred through email or any other file sharing means and queried at leisure offline.
 
 ## 2. Anonymization
 
