@@ -378,7 +378,7 @@ The table below describes the scoring for each group in the three categories for
 We examined all 13 feature detectors and picked No.9 (Nonlinear Progress Momentum) as our early warning detector. This detector only looks at the due dates of milestones within each group. Our justification is as follows:
 
 - Most of the groups had planned their milestones about 40 days before the project was due.
-- All groups have proposed at least 4 milestones.
+- All groups except one have proposed at least 4 milestones.
 - Milestones serve as the checkpoints for measuring the progress of the group.
 - Each milestones within the group requires equal amount of effort and time to work on.
 
