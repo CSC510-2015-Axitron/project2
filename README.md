@@ -375,11 +375,32 @@ The table below describes the scoring for each group in the three categories for
 
 ##Early Warning
 
+We examined all 13 feature detectors and picked No.9 (Nonlinear Progress Momentum) as our early warning detector. This detector only looks at the due dates of milestones within each group. Our justification is as follows:
+
+- Most of the groups had planned their milestones about 40 days before the project was due.
+- All groups have proposed at least 4 milestones.
+- Milestones serve as the checkpoints for measuring the progress of the group.
+- Each milestones within the group requires equal amount of effort and time to work on.
+
+Based on the above assumption, the linearity of milestone due dates vs. milestone number should reveal the planning strategy of the group. The regression equation for calculating the linearity has been described in the early section. The linearity was measured by the parameter of the second degree polynomial. That is, high linearity is expected to have very small value.
+
 ##Early Warning Results
 
+To evaluate the effectiveness of our early warning detector, the total stink score and the exact nonlinearity factor for each group are listed in the following table.
 
+| Group Number | Total stinkScore | nonlin factor |
+|:------------:|:----------------:|:-------------:|
+|       1      |       12         |      3.21     |
+|       2      |       14         |      2.71     |
+|       3      |        6         |      0.13     |
+|       4      |       10         |      0.25     |
+|       5      |        4         |       N/A     |
+|       6      |       11         |      1.06     |
+|       7      |        7         |      5.74     |
+|       8      |       13         |      6.99     |
+|       9      |        4         |      0.01     |
 
-
+It is found that the top three groups having the lowest stink score also have low nonlinerity factor. Respectively, they are 0.01, N/A, and 0.13. Here, the nonlinearity factor for group 5 was not determined because there are only two milestones defined by the group. However, the group having low nonlinearity factor does not necessarily have low stink score, which means that good planning does not guarantee better execution. If we examine the top three groups having highest stink scores (14, 13, and 12) all of them have high nonlinearity in their milestones (2.71, 6.99, and 3.21). This finding agrees with the belief that poor project initation and unrealistic expections is one of the causes for project failure.
 
 # Project 2 Info (Not part of paper)
 repo for storing project 2 data and code
