@@ -300,6 +300,20 @@ We have used the folowing acronyms for the various features that we were dealing
 - lincommitt:  Commit history linearity
 - numiss :  Number of issue posters
 
+All of the results are listed below in tables.  We chose to represent each feature in boolean fashion.  If a group had a particular feature that met our guideline for a smell in a particular bad smell decector, that group received a 1 for that feature.  Each bad smell has a calculation for a "Stink Score".  The idea there is that each group should be graded in some fashion to see the extent of the bad smell for that particular group.  Simply having one of the features in each bad smell is definitely negative, but it seems more fair to look at the groups with respect to each other on each bad smell.  The graph below shows an overview of all of the bad smells for each group.
+
+![stinkgraph.png](bad smell)
+
+This graph helps a bit to understand the data but is difficult to interpret.  The most important takeaway is that all of the groups had some bad smells, and some bad smells were much worse across the board than others.  For example, poor communication was a problem in all of the groups per this data, but the degree of the problem differed across groups.  Another bad smell that afflicted all of the gropus was absent group member.  Again, this was a question of degree with some gropus actually receiving a point for all four features on that smell.  Poor milestone usage ended up being the lowest scoring bad smell overall with 4 groups not receiving any points at all.  
+
+Another attempted metric here was an overall calculation of bad smells.  We tallied up the stink score across all of the bad smells to create this graph.  The important thing here was to remove any duplicate values from the calculation.  Eqassign was a duplicate from poor planning in absent group member, and since the split value in numpost was 50% the values were equivalent in both absent group member and dictator group member.  Aside from those duplications we ended up with the graph below to document the "stink score" for each group overall.
+
+![totalsting.png](total stink overall)
+
+
+It is very difficult to make any sweeping generalizations about this data given the fact that it was anonymized prior to our analysis.  That the data was anonymized makes it difficult to test whether these metrics actually showed poor performance or not.  That said, with the data as it is we would assume that groups 2, 8, and 1 would have had more difficulty in producing what they were able to produce over the semester.  
+
+
 #### Poor Communication
 
 The table below describes the scoring for each group in the three categories for poor communication:
