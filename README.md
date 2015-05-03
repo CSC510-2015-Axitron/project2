@@ -1,8 +1,8 @@
 # Project 2 Paper
 
-##Collection
+## 1. Collection
 
-###What we collected
+### 1.1 What we collected
 
 We collected a wealth of data from GitHub for each team. This data was kept organized in mostly the same way that GitHub organizes it, and consists of the following:
 
@@ -31,18 +31,18 @@ We collected a wealth of data from GitHub for each team. This data was kept orga
 
 Github organizes their API in much the same way and we saw no reason to break too far from their pattern. In addition, grabbing the raw data and caching it locally allows for fewer potential issues with network connections or API rate limitations, as opposed to using feature detectors that performed analysis directly after retrieving the data and storing the results.
 
-###How we collected it
+### 1.2 How we collected it
 
 As recommended, we utilized the gitable.py utility to grab the initial sets of data, but later decided that we would like more data than it could provide. We also agreed that inserting the data into a SQL database for query would be a valuable first step. Our current data collection process proceeds as follows:
 
-1. Start up gitable-sql.py (our modified gitable.py) with inputs for the target repo and anonymized group name
+1. Start up [gitable-sql.py](https://github.com/CSC510-2015-Axitron/project2/blob/master/gitable-sql.py) (our modified gitable.py) with inputs for the target repo and anonymized group name
 2. Retrieve all the data from GitHub's API
 3. Preprocess it (anonymization and formatting for insertion into database)
 4. Create a SQLite database if one does not already exist, and insert all the data into it
 
 Once this is complete, a .db file for that repo which can be transferred through email or any other file sharing means and queried at leisure offline.
 
-##Anonymization
+## 2. Anonymization
 
 Anonymization was performed on both group names and group users, so the individual groups and users will not be identified. Each group in our database was assigned with a number based on the order in which they were imported in the database. To anonymize users within each group, an empty array was created and each time when user ID was detected, the python program searched the array for the ID. If the user ID was not found in the array the ID would be entered into the array. Then, the user ID was replaced with "user" plus the index number of the ID in the array. The code for anonymization is shown as follows.
 
@@ -60,9 +60,11 @@ def anonymize(user):
     return user
 ```
 
-##Tables
+## 3. Tables
 
-##Data
+All tables in this project 2 paper are located in the Bad Smells Results section, one table per bad smell. Each table reports  stink scores summarized from the feature detectors corresponding to particular bad smell. If the numerical result of feature detector of the group is higher than the defined threshold, a stink score "1" is earned.
+
+## 4. Data
 
 Totals:
 
@@ -70,7 +72,7 @@ Totals:
 |-----------:|-------:|-------:|---------:|--------:|
 |         47 |    578 |   3883 |     1328 |    1760 |
 
-##Data Samples
+## 5. Data Samples
 
 #### Milestone
 id|title|description|created_at|due_at|closed_at|user|identifier
@@ -93,18 +95,18 @@ id|time|sha|user|message
 ---|---|---|---|---
 1|1428349546|d924a137ebf530fcd56c73980c9fcfbf6de69cdd|group9/user3|(text)
 
-##Feature Detection
+## 6. Feature Detection
 
 We eventually came up with 13 feature detectors utilizing our data. These detectors are as follows:
 
-#### 1. Long Open Issues
+#### (1) Long Open Issues
 
 This feature is relatively straightforward, we found the difference between the time that an issue was marked as closed and when the first event occurred on that issue. Expressed in SQL, this feature can be detected via:
 ```SQL
 select cl.issueID, (cl.time - op.time) as timeOpen from event cl, (select issueID, min(time) as time from event group by issueID) op where cl.action == 'closed' AND cl.issueID == op.issueID;
 ```
 
-#### 2. Issues Missing Milestones
+#### (2) Issues Missing Milestones
 
 This feature is also fairly straightforward, we found the difference between the time that an issue was marked as closed and when the milstone it was assigned to was due. In SQL, this is expressed as:
 ```SQL
@@ -115,7 +117,7 @@ select ev.issueID, ev.time-milestone.due_at as secondsAfter from
 milestone where milestone.id = ev.milestone;
 ```
 
-#### 3. Issue Closed Long Before Milstone Due
+#### (3) Issue Closed Long Before Milstone Due
 
 This feature is a little bit more complicated than the previous ones. In our project we came up with milestones under the assumption that all work for a particular milestone should be complete before a new milestone was started, and the work for that next milestone should not start until the work for the previous milestone had been completed. Operating under this assumption, we decided that it would be strange if work on a milestone's issues (shown as closed issues) was being done before a milestone was even started, meaning the one previous to it had not finished.
 This idea can be expressed as an SQL query as the following:
@@ -126,46 +128,46 @@ event e1,
 where e1.milestone = mileDur.id and e1.action = 'closed' and e1.time >= (select max(time) from event where event.action = 'closed' and issueID = e1.issueID);
 ```
 
-#### 4. Equal Number of Issue Assignees
+#### (4) Equal Number of Issue Assignees
 
 Rather straightforward, we decided that finding the number of issues assigned to each user in a project would be helpful information. In SQL, this is expressed as:
 ```SQL
 select label, count(*) from (select issueID, label from event e1 where action = 'assigned' and time >= (select max(time) from event where e1.issueID = issueID and action = 'assigned')) group by label;
 ```
 
-#### 5. Number of People Commenting on an Issue
+#### (5) Number of People Commenting on an Issue
 
 We felt that communicating on issues was an important part of team cohesiveness and involvement, and we felt that having a low number of people commenting on any particular issue would be an interesting data point to have. In SQL, we can discover the number of unique (non-repeated) users commenting on any particular issue with:
 ```SQL
 select issueID, count(distinct user) from comment group by issueID;
 ```
 
-#### 6. Number of Issues Posted by Each User
+#### (6) Number of Issues Posted by Each User
 
 As with users being assigned issues, we felt that knowing the spread of who identified or created issues was important. In SQL:
 ```SQL
 select user, count(*) from event e1 where time <= (select min(time) from event where issueID = e1.issueID) group by user;
 ```
 
-#### 7. Bug Label Usage
+#### (7) Bug Label Usage
 
 All software has bugs at some point or another, no matter how good the coder or tools, so we felt that the number of bug reports on a project would be a good metric of how carefully the team was looking for them. This detector outputs the number of issues labeled with any label that looks like "bug", the number of total issues, and the ratio of the two.
 ```SQL
 select bugs, count(distinct issueID) as issues, (bugs+0.0)/count(distinct issueID) as ratio from (select count(*) as bugs from event where lower(label) like '%bug%' and action == 'labeled'), event;
 ```
 
-#### 8. Number of Comments on an Issue
+#### (8) Number of Comments on an Issue
 
 As with the number of people commenting on an issue, we felt the number of comments on an issue was important information.
 ```SQL
 select issueID, count(*) from comment group by issueID;
 ```
 
-#### 9. Nonlinear Progress Momentum
+#### (9) Nonlinear Progress Momentum
 
 This feature is difficult to describe succinctly. It is a relation between a milestone's creation date, due date, and actual completion date. Projects that are more waterfall-y will have a very flat line for milestone creation date, showing that milestones were created all at once at the beginning of the project. Very agile-y projects will have a near-constant gap between milestone creation date and due date, indicating milestones are created every so often as work is proceeding. Projects with good effort estimation will have a very small or nonexistant gap between milestone due dates and completion dates, whereas projects with bad effort estimation will have large or highly variable gaps.
 
-Additional feature detection can be performed on milestone due dates. Assuming each milestones in the project requires euqal amount of the effort, the due dates vs. the milestone numbers when plotted should be linear. To quantify the linearity of such curves, the due dates of milestones were fitted to a second degree polynomial regression equation.
+Additional feature detection can be performed on milestone due dates. Assuming each milestones in the project requires euqal amount of the effort, the due dates vs. the milestone numbers when plotted should be linear. To quantify the linearity of such curves, the due dates of milestones were fitted by a second degree polynomial regression equation.
 
 ```
 y = a * x^2 + b * x + c
@@ -174,7 +176,7 @@ y = a * x^2 + b * x + c
 where variable **a** represents the curvature of the curve. High linearity should result in small value (i.e., a ~ 0).
 
 
-#### 10. Commit History Linearity
+#### (10) Commit History Linearity
 
 The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there was exactly constant amounts of work occurring, but life is not quite that perfect, so a linearity of around 0.8 and 0.9 is to be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
 
@@ -182,14 +184,14 @@ To determine the linearity of commit history, the area under each graph was dete
 
 ![linearity](http://i.imgur.com/zBDoT1n.png)
 
-#### 11. Percentage of Comments by User
+#### (11) Percentage of Comments by User
 
 As with other participation measures, the percentage of comments in a repo from any particular user can be quite useful, and is expressed in SQL as the following:
 ```SQL
 select user, count(*) as comments from comment group by user;
 ```
 
-#### 12. Short Lived Issues
+#### (12) Short Lived Issues
 
 We observed in our own group that sometimes users would mentally assign themselves to a feature but forget to put in an issue for it until after the feature was complete. This could potentially lead to duplicated work or just bad communication.
 In SQL we can extract the number of issues that have been open less than an hour and the total number of issues with the following:
@@ -197,13 +199,13 @@ In SQL we can extract the number of issues that have been open less than an hour
 select numShort, numTotal, (numShort+0.0)/numTotal from (select count(*) as numShort from event cl, (select issueID, min(time) as time from event group by issueID) op where cl.action == 'closed' AND cl.issueID == op.issueID and (cl.time - op.time) < 3600), (select count(distinct issueID) as numTotal from event);
 ```
 
-#### 13. Effort Estimation Error
+#### (13) Effort Estimation Error
 
 This detector was intended to discover if there was a correlation between when a milestone was created, relative to when it was due, and how far off it was from the actual close date. If such a correlation existed, milestones created far away from when they were due would be more frequently missed, and by a larger margin, than milestones created close to when they were due.
 
-##Feature Detection Results
+## 7. Feature Detection Results
 
-## Bad Smells Detector
+## 8. Bad Smells Detector
 
 We combined our feature extractors to create 5 different bad smell detectors. In this section we will attempt to describe how these detectors were created as well as the motivation for each detector.  The idea was to try to create as many detectors as possible from the feature extractors that we were able to define.
 
@@ -283,7 +285,7 @@ If a user had more assignments than the following function of assignments that w
 If a user posted more than the following function of comments that was also a bad smell: (Total number of comments / Number of members * 2)
 
 
-## Results
+## 9. Bad Smells Results
 
 We have used the folowing acronyms for the various features that we were dealing with:
 
@@ -373,7 +375,7 @@ The table below describes the scoring for each group in the three categories for
 |       8      |   1    |   0    |    0    |    1    |     2      |
 |       9      |   0    |   0    |    0    |    1    |     1      |
 
-##Early Warning
+## 10. Early Warning
 
 We examined all 13 feature detectors and picked No.9 (Nonlinear Progress Momentum) as our early warning detector. This detector only looks at the due dates of milestones within each group. Our justification is as follows:
 
@@ -384,11 +386,11 @@ We examined all 13 feature detectors and picked No.9 (Nonlinear Progress Momentu
 
 Based on the above assumption, the linearity of milestone due dates vs. milestone number should reveal the planning strategy of the group. The regression equation for calculating the linearity has been described in the early section. The linearity was measured by the parameter of the second degree polynomial. That is, high linearity is expected to have very small value.
 
-##Early Warning Results
+## 11. Early Warning Results
 
 To evaluate the effectiveness of our early warning detector, the total stink score and the exact nonlinearity factor for each group are listed in the following table.
 
-| Group Number | Total stinkScore | nonlin factor |
+| Group Number | Total StinkScore | nonlin factor |
 |:------------:|:----------------:|:-------------:|
 |       1      |       12         |      3.21     |
 |       2      |       14         |      2.71     |
@@ -401,6 +403,9 @@ To evaluate the effectiveness of our early warning detector, the total stink sco
 |       9      |        4         |      0.01     |
 
 It is found that the top three groups having the lowest stink score also have low nonlinerity factor. Respectively, they are 0.01, N/A, and 0.13. Here, the nonlinearity factor for group 5 was not determined because there are only two milestones defined by the group. However, the group having low nonlinearity factor does not necessarily have low stink score, which means that good planning does not guarantee better execution. If we examine the top three groups having highest stink scores (14, 13, and 12) all of them have high nonlinearity in their milestones (2.71, 6.99, and 3.21). This finding agrees with the belief that poor project initation and unrealistic expections is one of the causes for project failure.
+
+
+---
 
 # Project 2 Info (Not part of paper)
 repo for storing project 2 data and code
