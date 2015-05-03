@@ -165,9 +165,22 @@ select issueID, count(*) from comment group by issueID;
 
 This feature is difficult to describe succinctly. It is a relation between a milestone's creation date, due date, and actual completion date. Projects that are more waterfall-y will have a very flat line for milestone creation date, showing that milestones were created all at once at the beginning of the project. Very agile-y projects will have a near-constant gap between milestone creation date and due date, indicating milestones are created every so often as work is proceeding. Projects with good effort estimation will have a very small or nonexistant gap between milestone due dates and completion dates, whereas projects with bad effort estimation will have large or highly variable gaps.
 
+Additional feature detection can be performed on milestone due dates. Assuming each milestones in the project requires euqal amount of the effort, the due dates vs. the milestone numbers when plotted should be linear. To quantify the linearity of such curves, the due dates of milestones were fitted to a second degree polynomial regression equation.
+
+```
+y = a * x^2 + b * x + c
+```
+
+where variable **a** represents the curvature of the curve. High linearity should result in small value (i.e., a ~ 0).
+
+
 #### 10. Commit History Linearity
 
-The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there was exactly constant amounts of work occurring, but life is not quite that perfect, so a linearity of around 0.8 and 0.9 is to be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, howver, indicate that the team is rushing toward the end of the project.
+The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there was exactly constant amounts of work occurring, but life is not quite that perfect, so a linearity of around 0.8 and 0.9 is to be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
+
+To determine the linearity of commit history, the area under each graph was determined and then compared to the area of the ideal curve. The equation to calcuate the linearity is shown as follows:
+
+![linearity](http://i.imgur.com/zBDoT1n.png)
 
 #### 11. Percentage of Comments by User
 
