@@ -180,7 +180,7 @@ where variable **a** represents the curvature of the curve. High linearity shoul
 
 #### (10) Commit History Linearity
 
-The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there were constant amounts of work occurring over time, but since life is not quite that perfect, a linearity of between 0.0 and 1.0 might be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
+The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there were constant amounts of work occurring over time, but since life is not quite that perfect, a linearity of between 0.0 and 1.0 might be expected for projects that are proceeding smoothly. Graphs with a more expoential appearance, however, may indicate that significant portions of the project are being completed closer to the deadline.
 
 To determine the linearity of commit history, the area under each graph was determined and then compared to the area of the ideal curve. The equation to calcuate the linearity is shown as follows:
 
@@ -195,15 +195,14 @@ select user, count(*) as comments from comment group by user;
 
 #### (12) Short Lived Issues
 
-We observed in our own group that sometimes users would mentally assign themselves to a feature but forget to put in an issue for it until after the feature was complete. This could potentially lead to duplicated work or just bad communication.
-In SQL we can extract the number of issues that have been open less than an hour and the total number of issues with the following:
+We observed in our own group that users would occasionally mentally assign themselves to a feature but forget to create an issue until after the feature was complete. Such may lead to duplicated work or simply be indicative of poor communication. In SQL we can extract the number of issues that were open for less than an hour along with the total number of issues with the following:
 ```SQL
 select numShort, numTotal, (numShort+0.0)/numTotal from (select count(*) as numShort from event cl, (select issueID, min(time) as time from event group by issueID) op where cl.action == 'closed' AND cl.issueID == op.issueID and (cl.time - op.time) < 3600), (select count(distinct issueID) as numTotal from event);
 ```
 
 #### (13) Effort Estimation Error
 
-This detector was intended to discover if there was a correlation between when a milestone was created, relative to when it was due, and how far off it was from the actual close date. If such a correlation existed, milestones created far away from when they were due would be more frequently missed, and by a larger margin, than milestones created close to when they were due.
+This detector was intended to discover if there was a correlation between when a milestone was created relative to when it was due, and how far off it was from the actual close date. If such a correlation existed, milestones created far from their due dates would be more frequently missed, and by a larger margin, than milestones created close to their due dates.
 
 ## 7. Feature Detection Results
 
@@ -212,7 +211,7 @@ We created a series of visuals to describe the data we have for each feature det
 
 #### (1) Long Open Issues
 
-This visualization used boxplots to show the length of time that issues had been open.  It was a calculation of inception of an issue until when it was closed.  This is a bit difficult to categorize as better or worse either way, but issues over 20 days are not usually the best in our experience, and having a median value at or above that was considered negative.
+This visualization used boxplots to show the length of time that issues had been open.  It was a calculation of inception of an issue until when it was closed.  This is a bit difficult to categorize as better or worse either way, but issues over 20 days old are not usually the best in our experience, and having a median value at or above that was considered negative.
 
 ![long open issues](https://cloud.githubusercontent.com/assets/6590396/7217751/285ea032-e611-11e4-8365-834c1e9a2d9e.png)
 
@@ -222,7 +221,7 @@ This visualization contextualizes when issues were closed relative to when the m
 
 ![missing milestones](https://cloud.githubusercontent.com/assets/6590396/7217777/4169ccd6-e612-11e4-8863-1ff80ecba53d.png)
 
-#### (3) Issue Closed Long Before Milstone Due
+#### (3) Issues Closed Long Before Milstone Due
 
 This visualization shows when issues that were assigned to milestones were closed, it uses the number of days before or after a milestone starts as the scale.  This feature extractor was actually made upon making other visualizations that showed an odd behavior among some of the groups.  As can be seen below there were a number of groups that actually closed a large number of issues before the milestone they were in was actually closed.
 
@@ -230,11 +229,11 @@ This visualization shows when issues that were assigned to milestones were close
 
 #### (4) Equal Number of Issue Assignees
 
-A simple pie graph visualization of the precentage of issues that were assigned to a particular user.  Obviously the best thing here would be to see an even partition among group members.  
+A simple pie graph visualization of the precentage of issues that were assigned to a particular user.  Certainly the ideal case would be an even partition among group members. 
 
 ![equal number of assignements](https://cloud.githubusercontent.com/assets/6590396/7217794/4c070464-e613-11e4-808a-0e1f21d3ab2e.png)
 
-In this and subsequent pie graphs relating to users, group 7 will have a meaningless value because there was only one user in that group.
+In this and subsequent pie graphs relating to users, group 7's data is inconsequential as it consisted of only one participant.
 
 #### (5) Number of People Commenting on an Issue
 
@@ -244,13 +243,13 @@ Again this was created as a pie chart and shows the percentage of comments on an
 
 #### (6) Number of Issues Posted by Each User
 
-A pie chart that shows the percentage of issues posted by each user.  Even numbers of issues between each user is better here.
+A pie chart that shows the percentage of issues posted by each user.  Similar numbers of issues between each user is better here.
 
 ![num issues per user](https://cloud.githubusercontent.com/assets/6590396/7281789/c8fc21a0-e8f9-11e4-87ca-823fe0ae7b8a.png)
 
 #### (7) Bug Label Usage
 
-This turned out to be a somewhat difficult extractor to use, but the vizualization shows the percentage of issues that were non-bug related and the percentage that were bug related.  These graphs only apply to groups that actually had some sort of bug classification system.  The best thing here would be to have a good sized percentage of issues that were labeled as bugs.  Groups 6, 7, and 8 all had good sized percentages in this area.
+This turned out to be a somewhat difficult extractor to use, but the vizualization shows the percentage of issues that were non-bug-related and the percentage that were bug- related.  These graphs only apply to groups that actually had bug classification systems.  The ideal case would be for there to be a decent percentage of issues labeled as bugs.  Groups 6, 7, and 8 in particular all did well in this area.
 
 ![bug label usage](https://cloud.githubusercontent.com/assets/6590396/7311451/86d05780-ea0a-11e4-8302-3290c06b5cc8.png)
 
@@ -258,23 +257,23 @@ Groups 2, 4, and 5 did not use bug labels, and thus are excluded from this visua
 
 #### (8) Number of Comments on an Issue
 
-This is another boxplot used to describe the average nubmer of comments per issue that a particular group had.  The idea is that the more discussion a group has per issue the better.
+This is another boxplot used to describe the average number of comments per issue for a particular group.  The idea is that more discussion per issue is better.
 
 ![number of comments on an issue](https://cloud.githubusercontent.com/assets/6590396/7281800/d76cadc2-e8f9-11e4-8328-0475e96dd5d8.png)
 
-As with the user pie plots, group 7 had only one user, and that user did not talk to themselves extensively, hence the very small bar.
+As with the participant pie plots, group 7 had only one participant, and that participant did not talk to themselves extensively, hence the very small bar.
 
 #### (9) Nonlinear Progress Momentum
 
-This is actually a pretty complicated visualization to explain to some degree, but the idea here was to relate the dates that milestones were planned, due, and closed.  In terms of best it is somewhat difficult to term what is best here, but in some of the gropus it can readily be seen that they never close some of their milestones, also we see in some of the groups that they are well beyond their due dates when milestones are closed.  The best performance here from our standpoint is when at least the green and blue lines closely follow one another.  The red line is more of a stylistic issue across the gropus.  The first group in the vizualization simply planned all of their milestones at the beginning other groups had a planning line that followed the behavior of their due and closed lines.  
+This visualization is actually fairly difficult to explain, but the idea was to relate the dates that milestones were planned, due, and closed.  It is somewhat difficult to define the ideal case here, but in some of the groups it is apparent that some of their milestones were never closed.  Similarly, some of the groups closed their milestones well past their due dates.  The best performance here occurs when the lines, green and blue if not red as well, are similar.  The red line is more of a stylistic issue across the groups.  The first group in the vizualization simply planned all of their milestones at the beginning other groups had a planning line that followed the behavior of their due and closed lines.  
 
 ![non linear progress momentum](https://camo.githubusercontent.com/c46f5607d957682cfcb00111f21d52701b4f0a8a/687474703a2f2f692e696d6775722e636f6d2f566d5231555a322e706e67)
 
-Group 5 was excluded from this graph beacuse GitHub stored their milestones differently than the others, and they only had two, thus we felt it was pointless to attempt to make any sort of regression based on them.
+Group 5 was excluded from this graph because GitHub stored their milestones differently than the others, and they only had two, thus we felt that for them it was unnecessary to make a regression based on this.
 
 #### (10) Commit History Linearity
 
-This visualization describes the rate at which commits were made to a specific group's repo.  The best possible behavior here would be a straight line with a slope of 1.  That would mean that commits were being made each day and at nearly the same rate each day, so the work would have been spread evenly through the semester.
+This visualization describes the rate at which commits were made to a specific group's repository.  The ideal case here would be a straight line with a slope of 1.  That would mean that commits were made each day and at nearly the same rate each day, so the work would have been spread evenly through the semester.
 
 ![commit history linearity](https://camo.githubusercontent.com/79a3f2c59b0b47ddc13fa29747fbb5b20738bd6b/687474703a2f2f692e696d6775722e636f6d2f5979376b4b35732e706e67)
 
@@ -282,7 +281,7 @@ Group 4 was excluded from this visualization because they had only a very small 
 
 #### (11) Percentage of Comments by User
 
-This boxplot shows the average number of comments per issue, the subheading is percentage of comments by user, but this visualization proved to be more interesting for our work.  It shows that for a good many gropus two users commenting on each issue was pretty good, where some groups averaged no more than one user for each issue.  Obviously there was one group that only had one member, but more members commenting on each issue was better than only one.
+This boxplot shows the average number of comments per issue, the subheading is percentage of comments by user, but this visualization proved to be more interesting for our work.  It showed that for many groups two users commenting on each issue was pretty good, whereas some groups averaged no more than one user per issue.  Again there was one group that only had one member, but more members commenting on each issue was better than only one.
 
 ![number of users commenting on an issue](https://cloud.githubusercontent.com/assets/6590396/7281781/b7dc18da-e8f9-11e4-838a-3d9010f708ce.png)
 
@@ -305,17 +304,17 @@ Group 5 was again omitted because they had only two milestones and GitHub tracke
 We combined our feature extractors to create 5 different bad smell detectors. In this section we will attempt to describe how these detectors were created as well as the motivation for each detector.  The idea was to try to create as many detectors as possible from the feature extractors that we were able to define.
 
 #### Poor Communication
-The first detector is for poor communication.  The overall motivation with this as a bad smell is that if a group cannot communicate well, it will generally affect their productivity over the long term.  People in this sort of situation generally work at cross purposes and can run into issues like commit collisions, or duplication of effort.  It uses three feature extractors:
+The first detector is for poor communication.  The overall motivation with this as a bad smell is that if a group cannot communicate well, their productivity over the long term may be negatively affected.  People in such situations may work discordantly and might run into issues such as commit collisions or effort duplication.  It uses three feature extractors:
 
 - The number of posters in issue comments
 - The number of comments in issues
 - The percentage of comments by each user
 
-For number of posters in issue comments we were looking at the number of of individual users that posted on each issue.  The idea is that if only a small percentage of a group actually discussed issues then there is really poor communication overall.  We set the limit at 50% of of the group, so groups having less than 50% of their members commenting on issues had a bad smell.
+For the number of posters in issue comments, we were looking at the number of of individual users that posted on each issue.  The idea is that if only a small percentage of a group actually discussed issues then there is very poor communication overall.  We set the limit at 50% of of the group, so groups having less than 50% of their members commenting on issues had a bad smell.
 
-Number of comments in issues was gauged a bit differently.  We came to the conclusion that if an issue was important enough to be posted then there should be some kind of discussion of that issue.  We decided that less than 2 comments per issue was a bad smell.  At that point there is no to very little discussion of individual issues.
+Number of comments in issues was gauged a bit differently.  We came to the conclusion that if an issue was important enough to be posted, then there should be some kind of discussion of that issue.  We decided that less than 2 comments per issue was a bad smell.  At that point there is little to no discussion of individual issues.
 
-Percentage of comments by each user is another metric for communication.  If only a few members actually make comments in issues then there are only a few members that are actually communicating.  We decided that if an individual user had less comments than the output of the following function we had a bad smell:  (total number of comments/number of group members * 2). 
+Percentage of comments by each user is another metric for communication.  If only a few members post comments in issues, then there are only a few members that are actually communicating.  We decided that if an individual user had fewer comments than the output of the following function: total number of comments/number of group members * 2, then we had a bad smell.
 
 #### Poor Milestone Usage
 The next detecor is for poor milestone usage.  Milestones can be a great way to set up work for groups by splitting work into achievable sections.  So there can be two major benefits: the first is a simple sense of achievement for a group upon comletion of a milestone, the second is a a deadline to meet to keep work on track.  Additonally milestones can be used to get an idea of whether work is on track or not.  Given all of that poor milestone usage can definitely affect the level of success or failure that a group may find in producing a piece of software.  This detector comibined the following metrics:
