@@ -321,13 +321,13 @@ Percentage of comments by each user is another metric for communication.  If onl
 The next detecor is for poor milestone usage.  Milestones can be a great way to set up work for groups by splitting work into achievable sections.  So there can be two major benefits: the first is a simple sense of achievement for a group upon comletion of a milestone, the second is a a deadline to meet to keep work on track.  Additonally milestones can be used to get an idea of whether work is on track or not.  Given all of that poor milestone usage can definitely affect the level of success or failure that a group may find in producing a piece of software.  This detector comibined the following metrics:
 
 - Issues missing milestones
-- Non linear progress momentum
+- Nonlinear progress momentum
 - Less than 3 milestones overall
 - Milestones left incomplete
 
 For the first of the metrics, issues missing milestones, we decided that a median value over 0 was a poor value for a group.  The idea was that if a few issues were outside of milestones that was acceptable since there are bound to be such issues.  A good example is a bug issue post, that post would likely be outside of any milestone and it is definitely a good thing to have bug posts. 
 
-Non-linear progress momentum was another metric for this.  <PLACEHOLDER>  
+Non-linear progress momentum is another graphical representation of how groups planned out their project. The ideal curve should be linear, meaning good planning. If nonlinearity factor is more than 3.0 it is considered bad. In addition to the milestone graphs, two additional information such as closing dates and planning dates also reveal how groups cope with variation during project exeuction. Regardless of linearity of the curves, each milestone should be closed within reasonable timeframe. It is interesting to note that two groups with nonlinear preogress momenum in their milestones have at least one milestone that remains open. 
 
 If there were less than three milestones overall there was also a case for poor milestone usage.  THe motivation here is that if a group only had three milestones over the entire project lifespan then those three milestones were likely packed with issues and would be unweildy.  Splitting among many reachable milestones was viewed as more positive.
 
