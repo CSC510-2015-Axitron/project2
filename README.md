@@ -218,7 +218,7 @@ This visualization used boxplots to show the length of time that issues had been
 
 #### (2) Issues Missing Milestones
 
-<Not sure on this one>
+This visualization contextualizes when issues were closed relative to when the milestone they were assigned to was set to be due at. The 0 mark is when the milestone that any given issue was due, so bars that overlap into positive values are overdue.
 
 ![missing milestones](https://cloud.githubusercontent.com/assets/6590396/7217777/4169ccd6-e612-11e4-8863-1ff80ecba53d.png)
 
@@ -233,6 +233,8 @@ This visualization shows when issues that were assigned to milestones were close
 A simple pie graph visualization of the precentage of issues that were assigned to a particular user.  Obviously the best thing here would be to see an even partition among group members.  
 
 ![equal number of assignements](https://cloud.githubusercontent.com/assets/6590396/7217794/4c070464-e613-11e4-808a-0e1f21d3ab2e.png)
+
+In this and subsequent pie graphs relating to users, group 7 will have a meaningless value because there was only one user in that group.
 
 #### (5) Number of People Commenting on an Issue
 
@@ -252,11 +254,15 @@ This turned out to be a somewhat difficult extractor to use, but the vizualizati
 
 ![bug label usage](https://cloud.githubusercontent.com/assets/6590396/7311451/86d05780-ea0a-11e4-8302-3290c06b5cc8.png)
 
+Groups 2, 4, and 5 did not use bug labels, and thus are excluded from this visualization.
+
 #### (8) Number of Comments on an Issue
 
 This is another boxplot used to describe the average nubmer of comments per issue that a particular group had.  The idea is that the more discussion a group has per issue the better.
 
 ![number of comments on an issue](https://cloud.githubusercontent.com/assets/6590396/7281800/d76cadc2-e8f9-11e4-8328-0475e96dd5d8.png)
+
+As with the user pie plots, group 7 had only one user, and that user did not talk to themselves extensively, hence the very small bar.
 
 #### (9) Nonlinear Progress Momentum
 
@@ -264,11 +270,15 @@ This is actually a pretty complicated visualization to explain to some degree, b
 
 ![non linear progress momentum](https://camo.githubusercontent.com/c46f5607d957682cfcb00111f21d52701b4f0a8a/687474703a2f2f692e696d6775722e636f6d2f566d5231555a322e706e67)
 
+Group 5 was excluded from this graph beacuse GitHub stored their milestones differently than the others, and they only had two, thus we felt it was pointless to attempt to make any sort of regression based on them.
+
 #### (10) Commit History Linearity
 
 This visualization describes the rate at which commits were made to a specific group's repo.  The best possible behavior here would be a straight line with a slope of 1.  That would mean that commits were being made each day and at nearly the same rate each day, so the work would have been spread evenly through the semester.
 
 ![commit history linearity](https://camo.githubusercontent.com/79a3f2c59b0b47ddc13fa29747fbb5b20738bd6b/687474703a2f2f692e696d6775722e636f6d2f5979376b4b35732e706e67)
+
+Group 4 was excluded from this visualization because they had only a very small number of commits (2), the linearity regression for them would be untenable.
 
 #### (11) Percentage of Comments by User
 
@@ -278,15 +288,17 @@ This boxplot shows the average number of comments per issue, the subheading is p
 
 #### (12) Short Lived Issues
 
-<Is this actually the right graph?>
+This pie chart shows the proportion of short issues (open less than an hour) to the total number of issues. A high number of short-open issues implies that issues were not used very effectively to communicate what each member was doing, unless the features the issues represented were in fact small enough to be completed within an hour.
 
-![long open issues](https://cloud.githubusercontent.com/assets/6590396/7217751/285ea032-e611-11e4-8365-834c1e9a2d9e.png)
+![short open issues](https://cloud.githubusercontent.com/assets/6590396/7448351/732a8a42-f1e5-11e4-9b57-5da4ea9e10af.png)
 
 #### (13) Effort Estimation Error
 
-<Not sure what to say here>
+This scatterplot relates when the milestone was created, relative to when it was set to be due, to when the milestone was actually marked as complete. Scatters that show a trend from upper left to lower right indicate that the group was more accurate at predicting when the due date was closer to when the milestone was created. Scatters that show no trend indicate that there was little relation between prediction accuracy and time until due date.
 
 ![effort estimation error](https://camo.githubusercontent.com/a494c71daa2a4c8784f5e5a6e1e704788fb8c3ee/687474703a2f2f692e696d6775722e636f6d2f455545553339762e706e67)
+
+Group 5 was again omitted because they had only two milestones and GitHub tracked those issues differently than the other groups.
 
 ## 8. Bad Smells Detector
 
