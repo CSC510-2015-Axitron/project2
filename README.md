@@ -1,4 +1,4 @@
-# Project 2 Paper
+# Project 2 Report
 
 ## 1. Collection
 
