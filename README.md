@@ -205,6 +205,68 @@ This detector was intended to discover if there was a correlation between when a
 
 ## 7. Feature Detection Results
 
+We created a series of visuals to describe the data we have for each feature detector.  They are each listed below with any notes that are appropriate for them.
+
+
+#### (1) Long Open Issues
+
+![long open issues](https://cloud.githubusercontent.com/assets/6590396/7217751/285ea032-e611-11e4-8365-834c1e9a2d9e.png)
+
+#### (2) Issues Missing Milestones
+
+![missing milestones](https://cloud.githubusercontent.com/assets/6590396/7217777/4169ccd6-e612-11e4-8863-1ff80ecba53d.png)
+
+#### (3) Issue Closed Long Before Milstone Due
+
+![closed before due](https://cloud.githubusercontent.com/assets/6590396/7217786/e2c99016-e612-11e4-86a2-0d4f58a21f50.png)
+
+#### (4) Equal Number of Issue Assignees
+
+![equal number of assignements](https://cloud.githubusercontent.com/assets/6590396/7217794/4c070464-e613-11e4-808a-0e1f21d3ab2e.png)
+
+#### (5) Number of People Commenting on an Issue
+
+![num comments on issues](https://cloud.githubusercontent.com/assets/6590396/7374415/3a6b0162-eda0-11e4-96e9-0b6d03a45648.png)
+
+#### (6) Number of Issues Posted by Each User
+
+![num issues per user](https://cloud.githubusercontent.com/assets/6590396/7281789/c8fc21a0-e8f9-11e4-87ca-823fe0ae7b8a.png)
+
+
+#### (7) Bug Label Usage
+
+![bug label usage](https://cloud.githubusercontent.com/assets/6590396/7311451/86d05780-ea0a-11e4-8302-3290c06b5cc8.png)
+
+
+#### (8) Number of Comments on an Issue
+
+![number of comments on an issue](https://cloud.githubusercontent.com/assets/6590396/7281800/d76cadc2-e8f9-11e4-8328-0475e96dd5d8.png)
+
+#### (9) Nonlinear Progress Momentum
+
+![non linear progress momentum](https://camo.githubusercontent.com/c46f5607d957682cfcb00111f21d52701b4f0a8a/687474703a2f2f692e696d6775722e636f6d2f566d5231555a322e706e67)
+
+#### (10) Commit History Linearity
+
+![commit history linearity](https://camo.githubusercontent.com/79a3f2c59b0b47ddc13fa29747fbb5b20738bd6b/687474703a2f2f692e696d6775722e636f6d2f5979376b4b35732e706e67)
+
+
+#### (11) Percentage of Comments by User
+
+![number of users commenting on an issue](https://cloud.githubusercontent.com/assets/6590396/7281781/b7dc18da-e8f9-11e4-838a-3d9010f708ce.png)
+
+#### (12) Short Lived Issues
+
+The same graph applies for long open issues, to avoid scrolling, here it is again:
+
+![long open issues](https://cloud.githubusercontent.com/assets/6590396/7217751/285ea032-e611-11e4-8365-834c1e9a2d9e.png)
+
+
+#### (13) Effort Estimation Error
+
+![effort estimation error](https://camo.githubusercontent.com/a494c71daa2a4c8784f5e5a6e1e704788fb8c3ee/687474703a2f2f692e696d6775722e636f6d2f455545553339762e706e67)
+
+
 ## 8. Bad Smells Detector
 
 We combined our feature extractors to create 5 different bad smell detectors. In this section we will attempt to describe how these detectors were created as well as the motivation for each detector.  The idea was to try to create as many detectors as possible from the feature extractors that we were able to define.
