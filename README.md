@@ -212,62 +212,81 @@ We created a series of visuals to describe the data we have for each feature det
 
 #### (1) Long Open Issues
 
+This visualization used boxplots to show the length of time that issues had been open.  It was a calculation of inception of an issue until when it was closed.  This is a bit difficult to categorize as better or worse either way, but issues over 20 days are not usually the best in our experience, and having a median value at or above that was considered negative.
+
 ![long open issues](https://cloud.githubusercontent.com/assets/6590396/7217751/285ea032-e611-11e4-8365-834c1e9a2d9e.png)
 
 #### (2) Issues Missing Milestones
+
+<Not sure on this one>
 
 ![missing milestones](https://cloud.githubusercontent.com/assets/6590396/7217777/4169ccd6-e612-11e4-8863-1ff80ecba53d.png)
 
 #### (3) Issue Closed Long Before Milstone Due
 
+This visualization shows when issues that were assigned to milestones were closed, it uses the number of days before or after a milestone starts as the scale.  This feature extractor was actually made upon making other visualizations that showed an odd behavior among some of the groups.  As can be seen below there were a number of groups that actually closed a large number of issues before the milestone they were in was actually closed.
+
 ![closed before due](https://cloud.githubusercontent.com/assets/6590396/7217786/e2c99016-e612-11e4-86a2-0d4f58a21f50.png)
 
 #### (4) Equal Number of Issue Assignees
+
+A simple pie graph visualization of the precentage of issues that were assigned to a particular user.  Obviously the best thing here would be to see an even partition among group members.  
 
 ![equal number of assignements](https://cloud.githubusercontent.com/assets/6590396/7217794/4c070464-e613-11e4-808a-0e1f21d3ab2e.png)
 
 #### (5) Number of People Commenting on an Issue
 
+Again this was created as a pie chart and shows the percentage of comments on an issue on average for each user.  An evenly split graph is best here.
+
 ![num comments on issues](https://cloud.githubusercontent.com/assets/6590396/7374415/3a6b0162-eda0-11e4-96e9-0b6d03a45648.png)
 
 #### (6) Number of Issues Posted by Each User
 
-![num issues per user](https://cloud.githubusercontent.com/assets/6590396/7281789/c8fc21a0-e8f9-11e4-87ca-823fe0ae7b8a.png)
+A pie chart that shows the percentage of issues posted by each user.  Even numbers of issues between each user is better here.
 
+![num issues per user](https://cloud.githubusercontent.com/assets/6590396/7281789/c8fc21a0-e8f9-11e4-87ca-823fe0ae7b8a.png)
 
 #### (7) Bug Label Usage
 
+This turned out to be a somewhat difficult extractor to use, but the vizualization shows the percentage of issues that were non-bug related and the percentage that were bug related.  These graphs only apply to groups that actually had some sort of bug classification system.  The best thing here would be to have a good sized percentage of issues that were labeled as bugs.  Groups 6, 7, and 8 all had good sized percentages in this area.
+
 ![bug label usage](https://cloud.githubusercontent.com/assets/6590396/7311451/86d05780-ea0a-11e4-8302-3290c06b5cc8.png)
 
-
 #### (8) Number of Comments on an Issue
+
+This is another boxplot used to describe the average nubmer of comments per issue that a particular group had.  The idea is that the more discussion a group has per issue the better.
 
 ![number of comments on an issue](https://cloud.githubusercontent.com/assets/6590396/7281800/d76cadc2-e8f9-11e4-8328-0475e96dd5d8.png)
 
 #### (9) Nonlinear Progress Momentum
 
+This is actually a pretty complicated visualization to explain to some degree, but the idea here was to relate the dates that milestones were planned, due, and closed.  In terms of best it is somewhat difficult to term what is best here, but in some of the gropus it can readily be seen that they never close some of their milestones, also we see in some of the groups that they are well beyond their due dates when milestones are closed.  The best performance here from our standpoint is when at least the green and blue lines closely follow one another.  The red line is more of a stylistic issue across the gropus.  The first group in the vizualization simply planned all of their milestones at the beginning other groups had a planning line that followed the behavior of their due and closed lines.  
+
 ![non linear progress momentum](https://camo.githubusercontent.com/c46f5607d957682cfcb00111f21d52701b4f0a8a/687474703a2f2f692e696d6775722e636f6d2f566d5231555a322e706e67)
 
 #### (10) Commit History Linearity
 
+This visualization describes the rate at which commits were made to a specific group's repo.  The best possible behavior here would be a straight line with a slope of 1.  That would mean that commits were being made each day and at nearly the same rate each day, so the work would have been spread evenly through the semester.
+
 ![commit history linearity](https://camo.githubusercontent.com/79a3f2c59b0b47ddc13fa29747fbb5b20738bd6b/687474703a2f2f692e696d6775722e636f6d2f5979376b4b35732e706e67)
 
-
 #### (11) Percentage of Comments by User
+
+This boxplot shows the average number of comments per issue, the subheading is percentage of comments by user, but this visualization proved to be more interesting for our work.  It shows that for a good many gropus two users commenting on each issue was pretty good, where some groups averaged no more than one user for each issue.  Obviously there was one group that only had one member, but more members commenting on each issue was better than only one.
 
 ![number of users commenting on an issue](https://cloud.githubusercontent.com/assets/6590396/7281781/b7dc18da-e8f9-11e4-838a-3d9010f708ce.png)
 
 #### (12) Short Lived Issues
 
-The same graph applies for long open issues, to avoid scrolling, here it is again:
+<Is this actually the right graph?>
 
 ![long open issues](https://cloud.githubusercontent.com/assets/6590396/7217751/285ea032-e611-11e4-8365-834c1e9a2d9e.png)
 
-
 #### (13) Effort Estimation Error
 
-![effort estimation error](https://camo.githubusercontent.com/a494c71daa2a4c8784f5e5a6e1e704788fb8c3ee/687474703a2f2f692e696d6775722e636f6d2f455545553339762e706e67)
+<Not sure what to say here>
 
+![effort estimation error](https://camo.githubusercontent.com/a494c71daa2a4c8784f5e5a6e1e704788fb8c3ee/687474703a2f2f692e696d6775722e636f6d2f455545553339762e706e67)
 
 ## 8. Bad Smells Detector
 
