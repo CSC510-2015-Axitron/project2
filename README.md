@@ -121,7 +121,7 @@ milestone where milestone.id = ev.milestone;
 
 #### (3) Issue Closed Long Before Milstone Due
 
-This feature is a little bit more complicated than the previous ones. In our project we came up with milestones under the assumption that all work for a particular milestone should be complete before a new milestone was started, and the work for that next milestone should not start until the work for the previous milestone had been completed. Operating under this assumption, we decided that it would be strange if work on a milestone's issues (shown as closed issues) was being done before a milestone was even started, meaning the one previous to it had not finished.
+This feature is a little bit more complicated than the previous ones. In our project we came up with milestones under the assumption that all work for a particular milestone should be complete before a new milestone was started, and the work for that next milestone should not start until the work for the previous milestone had been completed. Operating under this assumption, we decided that it would be improper if work on a milestone's issues (shown as closed issues) was being done before a milestone was even started, meaning the one previous to it had not finished.
 This idea can be expressed as an SQL query as the following:
 ```SQL
 select e1.issueID, (e1.time - (mileDur.due_at - mileDur.duration)) as timeAfterStart, mileDur.duration as duration from
@@ -139,7 +139,7 @@ select label, count(*) from (select issueID, label from event e1 where action = 
 
 #### (5) Number of People Commenting on an Issue
 
-We felt that communicating on issues was an important part of team cohesiveness and involvement, and we felt that having a low number of people commenting on any particular issue would be an interesting data point to have. In SQL, we can discover the number of unique (non-repeated) users commenting on any particular issue with:
+We felt that communicating on issues was an important part of team cohesiveness and involvement, and we felt that whether a low or high number of peple commented on any particular issue would be an interesting data point to have. In SQL, we can discover the number of unique (non-repeated) users commenting on any particular issue with:
 ```SQL
 select issueID, count(distinct user) from comment group by issueID;
 ```
@@ -167,9 +167,9 @@ select issueID, count(*) from comment group by issueID;
 
 #### (9) Nonlinear Progress Momentum
 
-This feature is difficult to describe succinctly. It is a relation between a milestone's creation date, due date, and actual completion date. Projects that are more waterfall-y will have a very flat line for milestone creation date, showing that milestones were created all at once at the beginning of the project. Very agile-y projects will have a near-constant gap between milestone creation date and due date, indicating milestones are created every so often as work is proceeding. Projects with good effort estimation will have a very small or nonexistant gap between milestone due dates and completion dates, whereas projects with bad effort estimation will have large or highly variable gaps.
+This feature is difficult to describe succinctly. It is a relation between a milestone's creation date, due date, and actual completion date. Projects that are more waterfall-like will have a very flat line for milestone creation date, showing that milestones were created all at once at the beginning of the project. Very agile-like projects will have a near-constant gap between milestone creation date and due date, indicating milestones are created every so often as work is proceeding. Projects with good effort estimation will have a very small gap between milestone due dates and completion dates, if any, whereas projects with poor effort estimation will have large or highly variable gaps.
 
-Additional feature detection can be performed on milestone due dates. Assuming each milestones in the project requires euqal amount of the effort, the due dates vs. the milestone numbers when plotted should be linear. To quantify the linearity of such curves, the due dates of milestones were fitted by a second degree polynomial regression equation.
+Additional feature detection can be performed on milestone due dates. Assuming each milestone in the project requires euqal amount of the effort, the due dates vs. the milestone numbers should yield a linear plot. To quantify the linearity of such curves, the due dates of milestones were fitted by a second degree polynomial regression equation.
 
 ```
 y = a * x^2 + b * x + c
@@ -180,7 +180,7 @@ where variable **a** represents the curvature of the curve. High linearity shoul
 
 #### (10) Commit History Linearity
 
-The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there was exactly constant amounts of work occurring, but life is not quite that perfect, so a linearity of between 0 and 1.0 is to be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
+The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there were constant amounts of work occurring over time, but since life is not quite that perfect, a linearity of between 0.0 and 1.0 might be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
 
 To determine the linearity of commit history, the area under each graph was determined and then compared to the area of the ideal curve. The equation to calcuate the linearity is shown as follows:
 
