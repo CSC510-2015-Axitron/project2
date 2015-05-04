@@ -40,7 +40,7 @@ As recommended, we utilized the gitable.py utility to grab the initial sets of d
 3. Preprocess it (anonymization and formatting for insertion into database)
 4. Create a SQLite database if one does not already exist, and insert all the data into it
 
-Once this is complete, a .db file for that repo which can be transferred through email or any other file sharing means and queried at leisure offline.
+Once this is complete, it will spit out a .db file for that repo which can be transferred through email or any other file sharing means and queried at leisure offline.
 
 ## 2. Anonymization
 
@@ -66,13 +66,15 @@ All tables in this project 2 paper are located in [Bad Smells Results](https://g
 
 ## 4. Data
 
-Totals:
+The totals listed in the table below include data from all 9 projects, our own included, and comes directly from summing up the number of entries in each SQL table.
 
 | Milestones | Issues | Events | Comments | Commits |
 |-----------:|-------:|-------:|---------:|--------:|
 |         47 |    578 |   3883 |     1328 |    1760 |
 
 ## 5. Data Samples
+
+The following samples are raw tuples taken from our own project's .db file. Where applicable, some attributes have been shortened where the data is too large to comfortably fit on the page.
 
 #### Milestone
 id|title|description|created_at|due_at|closed_at|user|identifier
@@ -178,7 +180,7 @@ where variable **a** represents the curvature of the curve. High linearity shoul
 
 #### (10) Commit History Linearity
 
-The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there was exactly constant amounts of work occurring, but life is not quite that perfect, so a linearity of around 0.8 and 0.9 is to be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
+The commit history of a project generally indicates how frequently people are working on the project. A completely linear commit history would indicate that there was exactly constant amounts of work occurring, but life is not quite that perfect, so a linearity of between 0 and 1.0 is to be expected for projects that are proceeding smoothly. Graphs that look more like an exponential function, however, indicate that the team is rushing toward the end of the project.
 
 To determine the linearity of commit history, the area under each graph was determined and then compared to the area of the ideal curve. The equation to calcuate the linearity is shown as follows:
 
