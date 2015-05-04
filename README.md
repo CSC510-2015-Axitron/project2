@@ -324,28 +324,28 @@ The next detecor is for poor milestone usage.  Milestones can be a great way to 
 - Less than 3 milestones overall
 - Milestones left incomplete
 
-For the first of the metrics, issues missing milestones, we decided that a median value over 0 was a poor value for a group.  The idea was that if a few issues were outside of milestones that was acceptable since there are bound to be such issues.  A good example is a bug issue post, that post would likely be outside of any milestone and it is definitely a good thing to have bug posts. 
+For the first of the metrics, issues missing milestones, we decided that a median value greater than zero was a poor value for a group. The idea was that having a small amount of issues were outside of milestones was acceptable because there are bound to be such issues.  A good example is a bug issue post, as it would likely be outside of any milestone, and it is also definitely good to have. 
 
 Non-linear progress momentum is another graphical representation of how groups planned out their project. The ideal curve should be linear, meaning good planning. If nonlinearity factor is more than 3.0 it is considered bad. In addition to the milestone graphs, two additional information such as closing dates and planning dates also reveal how groups cope with variation during project exeuction. Regardless of linearity of the curves, each milestone should be closed within reasonable timeframe. It is interesting to note that two groups with nonlinear preogress momenum in their milestones have at least one milestone that remains open. 
 
-If there were less than three milestones overall there was also a case for poor milestone usage.  THe motivation here is that if a group only had three milestones over the entire project lifespan then those three milestones were likely packed with issues and would be unweildy.  Splitting among many reachable milestones was viewed as more positive.
+If there were fewer than three milestones overall, there was also a case for poor milestone usage.  The motivation here is that if a group only had three milestones over the entire project lifespan, then those three milestones were likely packed with issues and would be unweildy.  Splitting among many reachable milestones was viewed as more positive.
 
-Milestones that were not completed was an obvious bad smell within a project.  If a group left any milestones incomplete they were considered as having a bad smell.  As will be seen below there were some groups that left more than one milestone open and that would be considered as even more negative.
+Milestones that were not completed was a clear bad smell within a project.  If a group left any milestones incomplete, they were considered as having a bad smell.  As will be seen below there were some groups that left more than one milestone open, which is considered as even more negative.
 
 #### Absent Group Member
-The idea with this bad smell was that if a group member was not contributing they represented sort of dead weight within a project.  There are many bad effects that come with an absent group member but the most detrimental is poor morale.  If other group members sense that there is a member who isn't pulling their weight, it can negatively affect how the working members feel about the project in general.  Then added to that effect is the simple fact that there are just less hands to work on the project.  The metrics attached to the smell are:
+The idea with this bad smell was that if a group member was not contributing, they represented sort of dead weight within a project.  There are many bad effects that come with an absent group member, but the most detrimental is poor morale.  If other group members sense that there is a member who isn't pulling their weight, it can negatively affect how the working members feel about the project in general.  Then added to that effect is the simple fact that there are fewer hands to work on the project.  The metrics attached to the smell are:
 
 - Number of issue posters
 - Percentage of comments by each user
 - Equal number of assignees
 - Number of posters in issue comments
 
-We used the same calculation for the first three metrics:  (Total number of x / number of group members * 2) where x is either issues, comments, or assignments for each metric.  If any individual user was below the number calculated for that function in either issues, comments, or assignements as matched the case we considered that a bad smell.  
+We used the same calculation for the first three metrics:  (Total number of x / number of group members * 2) where x is either issues, comments, or assignments for each metric.  If any individual user was below the number calculated for that function in either issues, comments, or assignements as matched the case, we considered that a bad smell.  
 
-Additionally we looked at the number of posters in issue comments.  If a user was posting in less than 50% of the comments we would also consider that a bad smell.
+Additionally we looked at the number of posters in issue comments.  If a user was posting 50% fewer comments than average per user, we would also consider that a bad smell.
 
 #### Poor Planning
-Poor planning was a big of a hodgepodge of different feature extractors since github was used a good deal for planning throughout the semester.  The motivation here is that if a group had poor planning there could be many different failings that emerge over a semester.  If a group has planned poorly it will severely limit the amount of success they could possibly have over a semester long project.  The main way that takes place is in the lack of thinking about potential roadblocks in a project, if there is no plan in place then projects could get much of the way through development and hit an issue that makes the entire project non-functional.  Also a group may find that the scale of their project is either way above or way below the amount of time available for the project.  The metrics for the smell are:
+Poor planning was a big of a hodgepodge of different feature extractors since github was used a good deal for planning throughout the semester.  The motivation here is that if a group had poor planning there could be many different failings that emerge over a semester.  If a group has planned poorly it will severely limit the amount of success they could achieve over a semester-long project.  The main way that takes place is in the lack of thinking about potential roadblocks in a project, if there is no plan in place then projects could get much of the way through development and hit an issue that makes the entire project non-functional.  Also a group may find that the scale of their project is either way above or way below the amount of time available for the project.  The metrics for the smell are:
 
 - Long time between issues opening and closing
 - Issues missing milestones
@@ -358,9 +358,9 @@ For long time between issues opening and closing, we considered twenty days a po
 
 We used the same calculations mentioned above for issues missing milestones, equal number of assignees, and non-linear progress momentum. 
 
-With short time between issues opening and closing we considered that if greater than 20% of the issues for a group were open less than an hour, that was a bad smell.
+With short time between issues opening and closing, we considered that if greater than 20% of the issues for a group were open less than an hour, that was a bad smell.
 
-Finally wiht the linearity of commit history, if the error in linearity was greater than 20% we considered that a bad smell.
+Finally with the linearity of commit history, if the error in linearity was greater than 20%, we considered that a bad smell.
 
 #### Dictator 
 Our dictator bad smell was very similar to our absent bad smell, but with many of the inequality symbols changed around.  If a project has a dictator there are many negative effects that may not be immediately visible.  The first effect is that options are not discussed so a group may not be taking an optimal path to completion of the project.  Secondly group members may not feel that they can contribute to the project simply because they were not consulted and do not have a grasp of all of the technologies involved.  THe metrics for this smell were:
@@ -381,7 +381,7 @@ If a user posted more than the following function of comments that was also a ba
 
 ## 9. Bad Smells Results
 
-We have used the folowing acronyms for the various features that we were dealing with:
+We have used the following acronyms for the various features that we were dealing with:
 
 - numpost:  The number of posters in issue comments
 - numcom: The number of comments in issues
@@ -515,7 +515,7 @@ It is found that the top three groups having the lowest stink score also have lo
 
 ---
 
-# Project 2 Info (Not part of paper)
+# Project 2 Info (Not part of report)
 repo for storing project 2 data and code
 
 ## Usage
