@@ -195,7 +195,7 @@ select user, count(*) as comments from comment group by user;
 
 #### (12) Short Lived Issues
 
-We observed in our own group that users would occasionally mentally assign themselves to a feature but forget to create an issue until after the feature was complete. Such may lead to duplicated work or simply be indicative of poor communication. In SQL we can extract the number of issues that were open for less than an hour along with the total number of issues with the following:
+We observed in our own group that users would occasionally mentally assign themselves to a feature but forget to create an issue until after the feature was complete. Such behavior may lead to duplicated work or simply be indicative of poor communication. In SQL we can extract the number of issues that were open for less than an hour along with the total number of issues with the following:
 ```SQL
 select numShort, numTotal, (numShort+0.0)/numTotal from (select count(*) as numShort from event cl, (select issueID, min(time) as time from event group by issueID) op where cl.action == 'closed' AND cl.issueID == op.issueID and (cl.time - op.time) < 3600), (select count(distinct issueID) as numTotal from event);
 ```
@@ -217,7 +217,7 @@ This visualization used boxplots to show the length of time that issues had been
 
 #### (2) Issues Missing Milestones
 
-This visualization contextualizes when issues were closed relative to when the milestone they were assigned to was set to be due at. The 0 mark is when the milestone that any given issue was due, so bars that overlap into positive values are overdue.
+This visualization contextualizes when issues were closed relative to when the milestone they were assigned to was set to be due. The 0 mark is when the milestone for any given issue was due, so bars that overlap into positive values are overdue.
 
 ![missing milestones](https://cloud.githubusercontent.com/assets/6590396/7217777/4169ccd6-e612-11e4-8863-1ff80ecba53d.png)
 
@@ -229,11 +229,11 @@ This visualization shows when issues that were assigned to milestones were close
 
 #### (4) Equal Number of Issue Assignees
 
-A simple pie graph visualization of the precentage of issues that were assigned to a particular user.  Certainly the ideal case would be an even partition among group members. 
+A simple pie graph visualization of the precentage of issues that were assigned to a particular user.  Certainly the ideal case would be an even partition among group members. In this and subsequent pie graphs relating to users, group 7's data is inconsequential as it consisted of only one participant.
 
 ![equal number of assignements](https://cloud.githubusercontent.com/assets/6590396/7217794/4c070464-e613-11e4-808a-0e1f21d3ab2e.png)
 
-In this and subsequent pie graphs relating to users, group 7's data is inconsequential as it consisted of only one participant.
+
 
 #### (5) Number of People Commenting on an Issue
 
@@ -249,39 +249,35 @@ A pie chart that shows the percentage of issues posted by each user.  Similar nu
 
 #### (7) Bug Label Usage
 
-This turned out to be a somewhat difficult extractor to use, but the vizualization shows the percentage of issues that were non-bug-related and the percentage that were bug- related.  These graphs only apply to groups that actually had bug classification systems.  The ideal case would be for there to be a decent percentage of issues labeled as bugs.  Groups 6, 7, and 8 in particular all did well in this area.
+This turned out to be a somewhat difficult extractor to use, but the vizualization shows the percentage of issues that were non-bug-related and the percentage that were bug- related.  These graphs only apply to groups that actually had bug classification systems.  The ideal case would be for there to be a decent percentage of issues labeled as bugs.  Groups 6, 7, and 8 in did particularly well in this area.  Groups 2, 4, and 5 did not use bug labels, and thus are excluded from this visualization.
 
 ![bug label usage](https://cloud.githubusercontent.com/assets/6590396/7311451/86d05780-ea0a-11e4-8302-3290c06b5cc8.png)
 
-Groups 2, 4, and 5 did not use bug labels, and thus are excluded from this visualization.
-
 #### (8) Number of Comments on an Issue
 
-This is another boxplot used to describe the average number of comments per issue for a particular group.  The idea is that more discussion per issue is better.
+This is another boxplot used to describe the average number of comments per issue for a particular group.  The idea is that more discussion per issue is better.  As with the participant pie plots, group 7 had only one participant, and that participant did not talk to themselves extensively, hence the very small bar.
 
 ![number of comments on an issue](https://cloud.githubusercontent.com/assets/6590396/7281800/d76cadc2-e8f9-11e4-8328-0475e96dd5d8.png)
 
-As with the participant pie plots, group 7 had only one participant, and that participant did not talk to themselves extensively, hence the very small bar.
-
 #### (9) Nonlinear Progress Momentum
 
-This visualization is actually fairly difficult to explain, but the idea was to relate the dates that milestones were planned, due, and closed.  It is somewhat difficult to define the ideal case here, but in some of the groups it is apparent that some of their milestones were never closed.  Similarly, some of the groups closed their milestones well past their due dates.  The best performance here occurs when the lines, green and blue if not red as well, are similar.  The red line is more of a stylistic issue across the groups.  The first group in the vizualization simply planned all of their milestones at the beginning other groups had a planning line that followed the behavior of their due and closed lines.  
+This visualization is actually fairly difficult to explain, but the idea was to relate the dates that milestones were planned, due, and closed.  It is somewhat difficult to define the ideal case here, but in some of the groups it is apparent that some of their milestones were never closed.  Similarly, some of the groups closed their milestones well past their due dates.  
+
+The best performance here occurs when the lines, green and blue if not red as well, are similar.  The red line is more of a stylistic issue across the groups.  The first group in the vizualization simply planned all of their milestones at the beginning other groups had a planning line that followed the behavior of their due and closed lines.  Group 5 was excluded from this graph because GitHub stored their milestones differently than the others, and they only had two, thus we felt that for them it was unnecessary to make a regression based on this.
 
 ![non linear progress momentum](https://camo.githubusercontent.com/c46f5607d957682cfcb00111f21d52701b4f0a8a/687474703a2f2f692e696d6775722e636f6d2f566d5231555a322e706e67)
 
-Group 5 was excluded from this graph because GitHub stored their milestones differently than the others, and they only had two, thus we felt that for them it was unnecessary to make a regression based on this.
+
 
 #### (10) Commit History Linearity
 
-This visualization describes the rate at which commits were made to a specific group's repository.  The ideal case here would be a straight line with a slope of 1.  That would mean that commits were made each day and at nearly the same rate each day, so the work would have been spread evenly through the semester.
+This visualization describes the rate at which commits were made to a specific group's repository.  The ideal case here would be a straight line with a slope of 1.  That would mean that commits were made each day and at nearly the same rate each day, so the work would have been spread evenly through the semester.  Group 4 was excluded from this visualization because they had only a very small number of commits (2), the linearity regression for them would be untenable.
 
 ![commit history linearity](https://camo.githubusercontent.com/79a3f2c59b0b47ddc13fa29747fbb5b20738bd6b/687474703a2f2f692e696d6775722e636f6d2f5979376b4b35732e706e67)
 
-Group 4 was excluded from this visualization because they had only a very small number of commits (2), the linearity regression for them would be untenable.
-
 #### (11) Percentage of Comments by User
 
-This boxplot shows the average number of comments per issue, the subheading is percentage of comments by user, but this visualization proved to be more interesting for our work.  It showed that for many groups two users commenting on each issue was pretty good, whereas some groups averaged no more than one user per issue.  Again there was one group that only had one member, but more members commenting on each issue was better than only one.
+This boxplot shows the average number of comments per issue, the subheading is percentage of comments by user, but this visualization proved to be more interesting for our work.  It showed that for many groups two users commenting on each issue was pretty good, whereas some groups averaged no more than one user per issue. More members commenting on each issue was considered to be better.  Group 7 only had one member, so all of its issues reflected only having one member commenting on an issue.
 
 ![number of users commenting on an issue](https://cloud.githubusercontent.com/assets/6590396/7281781/b7dc18da-e8f9-11e4-838a-3d9010f708ce.png)
 
@@ -293,11 +289,9 @@ This pie chart shows the proportion of short issues (open less than an hour) to 
 
 #### (13) Effort Estimation Error
 
-This scatterplot relates when the milestone was created, relative to when it was set to be due, to when the milestone was actually marked as complete. Scatters that show a trend from upper left to lower right indicate that the group was more accurate at predicting when the due date was closer to when the milestone was created. Scatters that show no trend indicate that there was little relation between prediction accuracy and time until due date.
+This scatterplot relates when the milestone was created, relative to when it was set to be due, to when the milestone was actually marked as complete. Scatters that show a trend from upper left to lower right indicate that the group was more accurate at predicting when the due date was closer to when the milestone was created. Scatters that show no trend indicate that there was little relation between prediction accuracy and time until due date.  Group 5 was again omitted because they had only two milestones and GitHub tracked those issues differently than the other groups.
 
 ![effort estimation error](https://camo.githubusercontent.com/a494c71daa2a4c8784f5e5a6e1e704788fb8c3ee/687474703a2f2f692e696d6775722e636f6d2f455545553339762e706e67)
-
-Group 5 was again omitted because they had only two milestones and GitHub tracked those issues differently than the other groups.
 
 ## 8. Bad Smells Detector
 
@@ -314,23 +308,23 @@ For the number of posters in issue comments, we were looking at the number of of
 
 Number of comments in issues was gauged a bit differently.  We came to the conclusion that if an issue was important enough to be posted, then there should be some kind of discussion of that issue.  We decided that less than 2 comments per issue was a bad smell.  At that point there is little to no discussion of individual issues.
 
-Percentage of comments by each user is another metric for communication.  If only a few members post comments in issues, then there are only a few members that are actually communicating.  We decided that if an individual user had fewer comments than the output of the following function: total number of comments/number of group members * 2, then we had a bad smell.
+Percentage of comments by each user is another metric for communication.  If only a few members post comments in issues, then there are only a few members that are actually communicating.  We decided that if an individual user had fewer comments than the output of the following function: (total number of comments/number of group members * 2, then we had a bad smell).
 
 #### Poor Milestone Usage
-The next detecor is for poor milestone usage.  Milestones can be a great way to set up work for groups by splitting work into achievable sections.  So there can be two major benefits: the first is a simple sense of achievement for a group upon comletion of a milestone, the second is a a deadline to meet to keep work on track.  Additonally milestones can be used to get an idea of whether work is on track or not.  Given all of that poor milestone usage can definitely affect the level of success or failure that a group may find in producing a piece of software.  This detector comibined the following metrics:
+Milestones can be a great way to set up work for groups by splitting work into achievable sections.  So there can be two major benefits: the first is a simple sense of achievement for a group upon comletion of a milestone, the second is a a deadline to meet to keep work on track.  Additonally milestones can be used to get an idea of whether work is on track or not.  Given all of that poor milestone usage can definitely affect the level of success or failure that a group may find in producing a piece of software.  This detector comibined the following metrics:
 
 - Issues missing milestones
 - Nonlinear progress momentum
 - Less than 3 milestones overall
 - Milestones left incomplete
 
-For the first of the metrics, issues missing milestones, we decided that a median value greater than zero was a poor value for a group. The idea was that having a small amount of issues were outside of milestones was acceptable because there are bound to be such issues.  A good example is a bug issue post, as it would likely be outside of any milestone, and it is also definitely good to have. 
+For the first of the metrics, issues missing milestones, we decided that a median value greater than zero was a poor value for a group. The idea was that having a small amount of issues that were outside of milestones was acceptable because there are bound to be such issues.  A good example is a bug issue post, as it would likely be outside of any milestone, and it is also definitely good to have. 
 
-Non-linear progress momentum is another graphical representation of how groups planned out their project. The ideal curve should be linear, meaning good planning. If nonlinearity factor is more than 3.0 it is considered bad. In addition to the milestone graphs, two additional information such as closing dates and planning dates also reveal how groups cope with variation during project exeuction. Regardless of linearity of the curves, each milestone should be closed within reasonable timeframe. It is interesting to note that two groups with nonlinear preogress momenum in their milestones have at least one milestone that remains open. 
+Non-linear progress momentum is another graphical representation of how groups planned out their project. The ideal curve should be linear, meaning good planning. If nonlinearity factor is more than 3.0 it is considered bad. In addition to the milestone graphs, two additional data points such as closing dates and planning dates also reveal how groups cope with variation during project exeuction. Regardless of linearity of the curves, each milestone should be closed within reasonable timeframe. It is interesting to note that two groups with nonlinear preogress momenum in their milestones have at least one milestone that remains open. 
 
 If there were fewer than three milestones overall, there was also a case for poor milestone usage.  The motivation here is that if a group only had three milestones over the entire project lifespan, then those three milestones were likely packed with issues and would be unweildy.  Splitting among many reachable milestones was viewed as more positive.
 
-Milestones that were not completed was a clear bad smell within a project.  If a group left any milestones incomplete, they were considered as having a bad smell.  As will be seen below there were some groups that left more than one milestone open, which is considered as even more negative.
+Milestones that were not completed was a clear bad smell within a project.  If a group left any milestones incomplete, they were considered as having a bad smell.  Out of the groups that actually left milestones open, both left two milestones open.  In reality this should be viewed even more negatively than one missed milestone, but only one point was given for this.
 
 #### Absent Group Member
 The idea with this bad smell was that if a group member was not contributing, they represented sort of dead weight within a project.  There are many bad effects that come with an absent group member, but the most detrimental is poor morale.  If other group members sense that there is a member who isn't pulling their weight, it can negatively affect how the working members feel about the project in general.  Then added to that effect is the simple fact that there are fewer hands to work on the project.  The metrics attached to the smell are:
@@ -345,7 +339,7 @@ We used the same calculation for the first three metrics:  (Total number of x / 
 Additionally we looked at the number of posters in issue comments.  If a user was posting 50% fewer comments than average per user, we would also consider that a bad smell.
 
 #### Poor Planning
-Poor planning was a big of a hodgepodge of different feature extractors since github was used a good deal for planning throughout the semester.  The motivation here is that if a group had poor planning there could be many different failings that emerge over a semester.  If a group has planned poorly it will severely limit the amount of success they could achieve over a semester-long project.  The main way that takes place is in the lack of thinking about potential roadblocks in a project, if there is no plan in place then projects could get much of the way through development and hit an issue that makes the entire project non-functional.  Also a group may find that the scale of their project is either way above or way below the amount of time available for the project.  The metrics for the smell are:
+Poor planning was a bit of a hodgepodge of different feature extractors.  The motivation here is that if a group had poor planning there could be many different failings that emerge over a semester.  If a group has planned poorly it would have likely limited the amount of success they could achieve over the life of their project.  The main way that takes place is in the lack of thinking about potential roadblocks in a project, if there is no plan in place then projects could get much of the way through development and hit an issue that makes the entire project non-functional.  Also a group may find that the scale of their project is either way above or way below the amount of time available for the project.  The metrics for the smell are:
 
 - Long time between issues opening and closing
 - Issues missing milestones
@@ -363,7 +357,7 @@ With short time between issues opening and closing, we considered that if greate
 Finally with the linearity of commit history, if the error in linearity was greater than 20%, we considered that a bad smell.
 
 #### Dictator 
-Our dictator bad smell was very similar to our absent bad smell, but with many of the inequality symbols changed around.  If a project has a dictator there are many negative effects that may not be immediately visible.  The first effect is that options are not discussed so a group may not be taking an optimal path to completion of the project.  Secondly group members may not feel that they can contribute to the project simply because they were not consulted and do not have a grasp of all of the technologies involved.  THe metrics for this smell were:
+Our dictator bad smell was very similar to our absent bad smell, but with many of the inequality symbols changed around.  If a project has a dictator there are many negative effects that may not be immediately visible.  The first effect is that options are not discussed so a group may not be taking an optimal path to completion of the project.  Secondly group members may not feel that they can contribute to the project simply because they were not consulted and do not have a grasp of all of the technologies involved.  The metrics for this smell were:
 
 - Number of posters in issue comments
 - Number of issue posters
@@ -402,7 +396,7 @@ All of the results are listed below in tables.  We chose to represent each featu
 
 This graph helps a bit to understand the data but is difficult to interpret.  The most important takeaway is that all of the groups had some bad smells, and some bad smells were much worse across the board than others.  For example, poor communication was a problem in all of the groups per this data, but the degree of the problem differed across groups.  Another bad smell that afflicted all of the gropus was absent group member.  Again, this was a question of degree with some gropus actually receiving a point for all four features on that smell.  Poor milestone usage ended up being the lowest scoring bad smell overall with 4 groups not receiving any points at all.  
 
-Another attempted metric here was an overall calculation of bad smells.  We tallied up the stink score across all of the bad smells to create this graph.  The important thing here was to remove any duplicate values from the calculation.  Eqassign was a duplicate from poor planning in absent group member, and since the split value in numpost was 50% the values were equivalent in both absent group member and dictator group member.  Aside from those duplications we ended up with the graph below to document the "stink score" for each group overall.
+Another attempted metric here was an overall calculation of bad smells.  We tallied up the stink score across all of the bad smells to create this graph.  The important thing here was to remove any duplicate values from the calculation.  Eqassign was a duplicate from poor planning in absent group member, and since the split value in numpost was 50% the values were equivalent in both absent group member and dictator group member.  After removing those duplications we ended up with the graph below to document the "stink score" for each group overall.
 
 ![totalsting.png](https://github.com/CSC510-2015-Axitron/project2/blob/master/img/totalstink.png?raw=true)
 
@@ -492,7 +486,7 @@ We examined all 13 feature detectors and picked No.9 (Nonlinear Progress Momentu
 - Milestones serve as the checkpoints for measuring the progress of the group.
 - Each milestones within the group requires equal amount of effort and time to work on.
 
-Based on the above assumption, the linearity of milestone due dates vs. milestone number should reveal the planning strategy of the group. The regression equation for calculating the linearity has been described in the early section. The linearity was measured by the parameter of the second degree polynomial. That is, high linearity is expected to have very small value.
+Based on the above assumption, the linearity of milestone due dates vs. milestone number should reveal the planning strategy of the group. The regression equation for calculating the linearity is as decscribed previously in this paper. The linearity was measured by the parameter of the second degree polynomial. That is to say, high linearity resulted in very small values.
 
 ## 11. Early Warning Results
 
@@ -510,7 +504,7 @@ To evaluate the effectiveness of our early warning detector, the total stink sco
 |       8      |       13         |      6.99     |
 |       9      |        4         |      0.01     |
 
-It is found that the top three groups having the lowest stink score also have low nonlinerity factor. Respectively, they are 0.01, N/A, and 0.13. Here, the nonlinearity factor for group 5 was not determined because there are only two milestones defined by the group. However, the group having low nonlinearity factor does not necessarily have low stink score, which means that good planning does not guarantee better execution. If we examine the top three groups having highest stink scores (14, 13, and 12) all of them have high nonlinearity in their milestones (2.71, 6.99, and 3.21). This finding agrees with the belief that poor project initation and unrealistic expections is one of the causes for project failure.
+We found that the top three groups having the lowest stink score also have low nonlinerity factor. Respectively, they are 0.01, N/A, and 0.13. Here, the nonlinearity factor for group 5 was not determined because there are only two milestones defined by the group. However, the group that had a low nonlinearity factor does not necessarily have low stink score, which means that good planning does not guarantee better execution. If we examine the top three groups having the highest stink scores (14, 13, and 12) all of them have high nonlinearity in their milestones (2.71, 6.99, and 3.21). This finding agrees with the belief that poor project initiation and unrealistic expections is one of the causes for project failure.
 
 
 ---
