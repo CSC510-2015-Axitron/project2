@@ -66,13 +66,15 @@ All tables in this project 2 paper are located in [Bad Smells Results](https://g
 
 ## 4. Data
 
-Totals:
+The totals listed in the table below include data from all 9 projects, our own included, and comes directly from summing up the number of entries in each SQL table.
 
 | Milestones | Issues | Events | Comments | Commits |
 |-----------:|-------:|-------:|---------:|--------:|
 |         47 |    578 |   3883 |     1328 |    1760 |
 
 ## 5. Data Samples
+
+The following samples are raw tuples taken from our own project's .db file. Where applicable, some attributes have been shortened where the data is too large to comfortably fit on the page.
 
 #### Milestone
 id|title|description|created_at|due_at|closed_at|user|identifier
